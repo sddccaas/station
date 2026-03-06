@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetHub - Ultimate Edition</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --container-bg: rgba(15, 15, 15, 0.95);
+            --text-color: #ffffff;
+            --getnet-red: #ff0000;
+            --status-ok: #00ff41;
+            --status-warn: #ffcc00;
+            --status-crit: #ff003c;
+            --btn-shadow: rgba(0,0,0,0.3);
+        }
+
+        .light-mode {
+            --bg-color: #f4f4f4;
+            --container-bg: rgba(255, 255, 255, 0.98);
+            --text-color: #111111;
+            --btn-shadow: rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #particle-canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
+
+        .top-btn {
+            position: absolute; top: 30px;
+            background: rgba(255,255,255,0.05); border: 1px solid #333;
+            padding: 10px; border-radius: 12px; cursor: pointer; z-index: 100;
+            transition: 0.3s; fill: var(--text-color);
+        }
+        .top-btn:hover { border-color: var(--getnet-red); transform: scale(1.1); }
+        .theme-toggle { right: 30px; }
+        .script-toggle { left: 30px; }
+        .light-mode .top-btn { background: #fff; border-color: #ccc; }
+
+        h1 { font-size: 4em; font-weight: 900; letter-spacing: -2px; text-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+        .get { color: var(--getnet-red); }
+        
+        .subtitle-container { height: 20px; margin-bottom: 50px; }
+        .subtitle { color: #666; text-transform: uppercase; letter-spacing: 5px; font-size: 0.8em; font-weight: bold; transition: opacity 0.5s ease; }
+
+        .hub-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            width: 100%; max-width: 1300px;
+        }
+
+        .btn-link {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 20px; background-color: var(--container-bg);
+            color: var(--text-color); text-decoration: none;
+            border-radius: 18px; border: 2px solid #1a1a1a;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center; cursor: pointer; min-height: 135px;
+            box-shadow: 0 5px 15px var(--btn-shadow);
+        }
+
+        .btn-link:hover { border-color: var(--getnet-red); transform: translateY(-5px); box-shadow: 0 0 25px rgba(255, 0, 0, 0.3); }
+
+        .light-mode .btn-link { border-color: #ddd; }
+        .light-mode .btn-featured { background: var(--getnet-red); }
+        .light-mode .btn-featured * { color: #ffffff !important; }
+
+        .btn-featured { background: linear-gradient(145deg, #ff0000, #a00000); border: none; box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+        .btn-featured .btn-title { color: #fff !important; }
+
+        .btn-title { font-weight: 800; font-size: 1.1em; text-transform: uppercase; }
+        .btn-desc { font-size: 0.8em; color: #888; margin-top: 6px; }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; top: 0; left: -450px; width: 420px; height: 100%;
+            background: var(--container-bg); border-right: 3px solid var(--getnet-red);
+            z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px; overflow-y: auto; box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+        }
+        .sidebar.active { left: 0; }
+        .close-sidebar { float: right; cursor: pointer; font-size: 24px; color: var(--getnet-red); font-weight: bold; }
+        .search-box { width: 100%; padding: 12px; border-radius: 10px; background: #000; border: 1px solid #333; color: #fff; margin-bottom: 20px; outline: none; }
+        .light-mode .search-box { background: #fff; border-color: #ccc; color: #111; }
+        #copy-toast { color: var(--status-ok); font-size: 0.8em; font-weight: bold; text-align: center; display: none; margin-bottom: 10px; }
+
+        .script-result { background: rgba(255,255,255,0.04); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--getnet-red); cursor: pointer; transition: 0.2s; text-align: left; }
+        .light-mode .script-result { background: #eee; }
+        .script-result:hover { background: rgba(255,0,0,0.1); transform: scale(1.01); }
+        .script-text { font-size: 0.95em; line-height: 1.5; color: inherit; white-space: pre-wrap; word-wrap: break-word; }
+
+        /* MODAIS */
+        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+        .modal-content { background: #0f0f0f; margin: 5vh auto; padding: 30px; border: 2px solid var(--getnet-red); width: 95%; max-width: 800px; border-radius: 25px; }
+        .light-mode .modal-content { background: #fff; border-color: var(--getnet-red); }
+        .layout-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .calc-box { flex: 1; min-width: 320px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 20px; border: 1px solid #333; margin-top: 15px; }
+        .light-mode .calc-box { background: #f9f9f9; border-color: #ddd; }
+        input, select { background: #000; border: 2px solid #222; color: #fff; padding: 12px; border-radius: 10px; text-align: center; width: 100%; margin-top: 10px; outline: none; font-weight: bold;}
+        .light-mode input, .light-mode select { background: #fff; border-color: #ccc; color: #111; }
+        label { font-size: 10px; color: var(--getnet-red); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .res-box { background: rgba(255,0,0,0.05); padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center; border-left: 4px solid var(--getnet-red); }
+        .close { float: right; cursor: pointer; font-size: 28px; color: #666; }
+    </style>
+</head>
+<body onload="init(); requestAnimationFrame(anim); startMotivation();">
+
+    <canvas id="particle-canvas"></canvas>
+    <input type="file" id="fileInput" accept=".txt" style="display:none" onchange="loadScripts(this)">
+
+    <button class="top-btn script-toggle" onclick="toggleSidebar()" title="Pesquisar Scripts">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    </button>
+    <button class="top-btn theme-toggle" onclick="document.body.classList.toggle('light-mode')">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+
+    <h1><span class="get">Get</span>Hub</h1>
+    <div class="subtitle-container">
+        <p id="motivation" class="subtitle">PREPARANDO SEU SUCESSO...</p>
+    </div>
+
+    <div class="hub-container">
+        <div id="main-nps-btn" onclick="document.getElementById('npsModal').style.display='block'" class="btn-link btn-featured">
+            <span class="btn-title">📊 Calculadora NPS</span>
+            <div style="font-size: 0.8em; margin-top: 10px; line-height: 1.4;">
+                <b>HOJE:</b> <span id="btn-nps-d">0.0%</span> | <span id="btn-miss-d">0</span><br>
+                <b>MÊS:</b> <span id="btn-nps-m">0.0%</span> | <span id="btn-miss-m">0</span><br>
+                <span id="btn-status" style="font-weight: 900; font-size: 0.9em; color: var(--status-warn);">STANDBY</span>
+            </div>
+        </div>
+
+        <div onclick="document.getElementById('aluguelModal').style.display='block'" class="btn-link" style="border: 2px solid var(--getnet-red); background: rgba(255,0,0,0.1);">
+            <span class="btn-title">💸 Calculo Aluguel</span>
+            <span class="btn-desc">Cálculo de Ciclo Mensal</span>
+        </div>
+
+        <div onclick="document.getElementById('contactModal').style.display='block'" class="btn-link" style="border: 1px solid #333;">
+            <span class="btn-title">👤 DADOS DE CONTATO</span>
+            <span class="btn-desc">E-mail e Ramal Profissional</span>
+        </div>
+
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
+
+    </div>
+
+    <div id="npsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('npsModal').style.display='none'">&times;</span>
+            <h2 style="color:var(--getnet-red); text-align: center;">ANALÍTICO NPS</h2>
+            <div class="layout-grid">
+                <div class="calc-box" id="box-d">
+                    <h3 style="font-size: 0.9em; margin-bottom: 10px;">DIÁRIO</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                        <div><label>PROMOTORES</label><input type="number" id="dp" min="0" oninput="v(this); c('d')"></div>
+                        <div><label>NEUTROS</label><input type="number" id="dn" min="0" oninput="v(this); c('d')"></div>
+                        <div><label>DETRATORES</label><input type="number" id="dd" min="0" oninput="v(this); c('d')"></div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label>META %</label><input type="number" id="dm" value="80" oninput="c('d')" style="width:70px; display:block">
+                    </div>
+                    <div class="res-box">NPS: <b id="dnps">0.0</b>% | <span id="dmsg">STANDBY</span></div>
+                </div>
+                <div class="calc-box" id="box-m">
+                    <h3 style="font-size: 0.9em; margin-bottom: 10px;">MENSAL</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                        <div><label>PROMOTORES</label><input type="number" id="mp" min="0" oninput="v(this); c('m')"></div>
+                        <div><label>NEUTROS</label><input type="number" id="mn" min="0" oninput="v(this); c('m')"></div>
+                        <div><label>DETRATORES</label><input type="number" id="md" min="0" oninput="v(this); c('m')"></div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label>META %</label><input type="number" id="mm" value="80" oninput="c('m')" style="width:70px; display:block">
+                    </div>
+                    <div class="res-box">NPS: <b id="mnps">0.0</b>% | <span id="mmsg">STANDBY</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="aluguelModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('aluguelModal').style.display='none'">&times;</span>
+            <h2 style="color:var(--getnet-red); text-align: center;">CALC ALUGUEL</h2>
+            <div class="calc-box" style="margin-top:20px">
+                <label>PLANO CONTRATADO</label>
+                <select id="plano" onchange="cA()"><option value="29.90">R$ 29,90</option><option value="79.90">R$ 79,90</option><option value="129.90">R$ 129,90</option></select>
+                <div style="display:flex; gap:15px; margin-top:15px">
+                    <div style="flex:1"><label>USO (MÁX 31)</label><input type="number" id="dUso" value="0" oninput="vA(); cA()"></div>
+                    <div style="flex:1"><label>MÊS (MÁX 31)</label><input type="number" id="dTot" value="30" oninput="vA(); cA()"></div>
+                </div>
+                <div class="res-box" style="font-size:1.5em">VALOR: <b id="rA" style="color:var(--getnet-red)">R$ 0,00</b></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="contactModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close" onclick="document.getElementById('contactModal').style.display='none'">&times;</span>
+            <h2 style="color:var(--getnet-red); text-align: center;">DADOS PROFISSIONAIS</h2>
+            <div class="calc-box" style="margin-top:20px">
+                <p style="margin-bottom:10px; font-size: 0.9em; border-bottom: 1px solid #222; padding-bottom: 5px;"><span style="color: var(--getnet-red); font-weight: bold;">NOME:</span> Gustavo</p>
+                <p style="margin-bottom:10px; font-size: 0.9em; border-bottom: 1px solid #222; padding-bottom: 5px;"><span style="color: var(--getnet-red); font-weight: bold;">E-MAIL:</span> gustavo@getnet.com.br</p>
+                <p style="margin-bottom:10px; font-size: 0.9em; border-bottom: 1px solid #222; padding-bottom: 5px;"><span style="color: var(--getnet-red); font-weight: bold;">SHINEVERSO:</span> @Gustavo</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="scriptSidebar" class="sidebar">
+        <span class="close-sidebar" onclick="toggleSidebar()">&times;</span>
+        <h2 style="color:var(--getnet-red); margin-bottom: 15px;">CONSULTA SCRIPTS</h2>
+        <button class="search-box" style="cursor:pointer; background:var(--getnet-red); border:none; font-weight:bold; color:white;" onclick="document.getElementById('fileInput').click()">📁 CARREGAR SCRIPTS.TXT</button>
+        <div id="copy-toast">SCRIPT COPIADO!</div>
+        <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar..." oninput="filterScripts()">
+        <div id="script-list"></div>
+    </div>
+
+    <script>
+        const phrases = ["FOCO NO 10: A SATISFAÇÃO DO CLIENTE É A NOSSA META.", "CADA ATENDIMENTO É UMA OPORTUNIDADE.", "META DADA É META BATIDA!", "TRANSFORME CADA DESAFIO EM UMA SOLUÇÃO EFICIENTE.", "PEQUENOS DETALHES CRIAM GRANDES CONEXÕES."];
+        let currentPhrase = 0;
+        function startMotivation() {
+            const el = document.getElementById('motivation');
+            setInterval(() => {
+                el.style.opacity = 0;
+                setTimeout(() => {
+                    currentPhrase = (currentPhrase + 1) % phrases.length;
+                    el.innerText = phrases[currentPhrase];
+                    el.style.opacity = 1;
+                }, 500);
+            }, 7000);
+        }
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSuccess() {
+            const now = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now); osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3);
+            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.2, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now); osc.stop(now + 0.4);
+        }
+
+        let rawScripts = [], metaBatidaD = false;
+        function toggleSidebar() { document.getElementById('scriptSidebar').classList.toggle('active'); }
+        
+        function loadScripts(i) {
+            const f = i.files[0]; const r = new FileReader();
+            r.onload = e => { 
+                const content = e.target.result;
+                rawScripts = content.split('//').map(s => s.split('#')[0].trim()).filter(s => s !== "");
+                displayScripts(rawScripts); 
+            };
+            r.readAsText(f);
+        }
+
+        function displayScripts(s) {
+            const list = document.getElementById('script-list');
+            list.innerHTML = "";
+            s.forEach((text, index) => {
+                const div = document.createElement('div');
+                div.className = 'script-result';
+                div.innerHTML = `<p class="script-text">${text}</p>`;
+                div.onclick = () => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const toast = document.getElementById('copy-toast');
+                        toast.style.display = 'block';
+                        setTimeout(() => { toast.style.display = 'none'; }, 1500);
+                    });
+                };
+                list.appendChild(div);
+            });
+        }
+
+        function filterScripts() {
+            const t = document.getElementById('searchInput').value.toLowerCase();
+            displayScripts(rawScripts.filter(s => s.toLowerCase().includes(t)));
+        }
+
+        function v(i) { if(i.value < 0) i.value = 0; }
+        function vA() {
+            let u = document.getElementById('dUso'), t = document.getElementById('dTot');
+            if(t.value > 31) t.value = 31; if(t.value < 1) t.value = 1;
+            if(parseInt(u.value) > parseInt(t.value)) u.value = t.value;
+            if(u.value < 0) u.value = 0;
+        }
+
+        function cA() {
+            const p = parseFloat(document.getElementById('plano').value);
+            const r = (p / (parseInt(document.getElementById('dTot').value) || 1)) * (parseInt(document.getElementById('dUso').value) || 0);
+            document.getElementById('rA').innerText = "R$ " + r.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        }
+
+        function c(type) {
+            const p = parseInt(document.getElementById(type+'p').value) || 0, n = parseInt(document.getElementById(type+'n').value) || 0,
+                  d = parseInt(document.getElementById(type+'d').value) || 0, meta = parseInt(document.getElementById(type+'m').value) || 80;
+            const total = p + n + d, nps = total > 0 ? ((p - d) / total) * 100 : 0;
+            document.getElementById(type+'nps').innerText = nps.toFixed(1);
+            let faltam = (total > 0 && nps < meta) ? Math.ceil(((meta/100 * total - p + d) / (1 - meta/100)) - 0.00001) : 0;
+            
+            if(nps >= meta && !metaBatidaD && type === 'd') { playSuccess(); metaBatidaD = true; } else if (nps < meta && type === 'd') { metaBatidaD = false; }
+            
+            document.getElementById('btn-nps-'+type).innerText = nps.toFixed(1) + "%";
+            document.getElementById('btn-miss-'+type).innerText = (total > 0 && nps >= meta) ? "OK" : faltam;
+            
+            if(type === 'd') {
+                let s = nps >= meta ? "BATIDA 🚀" : (meta-nps <= 10 ? "PERTO ⚠️" : "BAIXO 🏃");
+                document.getElementById('btn-status').innerText = total > 0 ? s : "STANDBY";
+                document.getElementById('btn-status').style.color = (total > 0) ? (nps >= meta ? "var(--status-ok)" : "var(--status-crit)") : "inherit";
+            }
+            
+            document.getElementById('box-'+type).style.borderColor = total > 0 ? (nps >= meta ? "var(--status-ok)" : (meta-nps <= 10 ? "var(--status-warn)" : "var(--status-crit)")) : "#333";
+            document.getElementById(type+'msg').innerText = (total > 0 && nps >= meta) ? "META BATIDA!" : (total > 0 ? "FALTAM " + (faltam < 0 ? 0 : faltam) : "STANDBY");
+        }
+
+        const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
+        let pts = [], lastTime = 0;
+        function init() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            pts = []; for (let i = 0; i < 30; i++) pts.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3});
+        }
+        function anim(time) {
+            if (time - lastTime < 32) { requestAnimationFrame(anim); return; }
+            lastTime = time; ctx.clearRect(0,0,canvas.width,canvas.height); 
+            ctx.strokeStyle = document.body.classList.contains('light-mode') ? "rgba(255,0,0,0.1)" : "rgba(255,255,255,0.12)";
+            pts.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1;
+                for(let j=i+1; j<pts.length; j++) {
+                    let dx = p.x-pts[j].x, dy = p.y-pts[j].y;
+                    if(dx*dx + dy*dy < 50000) { ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
+                }
+            });
+            requestAnimationFrame(anim);
+        }
+        window.onresize = init;
+    </script>
+</body>
+</html>
