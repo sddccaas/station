@@ -317,7 +317,7 @@
 
         function c(type) {
             const p = parseInt(document.getElementById(type+'p').value) || 0, n = parseInt(document.getElementById(type+'n').value) || 0,
-                  d = parseInt(document.getElementById(type+'d').value) || 0, meta = parseInt(document.getElementById(type+'m').value) || 80;
+                  d = parseInt(document.getElementById(type+'d').value) || 0, meta = parseInt(document.getElementById(type+'m').value) || 70;
             const total = p + n + d, nps = total > 0 ? ((p - d) / total) * 100 : 0;
             document.getElementById(type+'nps').innerText = nps.toFixed(1);
             let faltam = (total > 0 && nps < meta) ? Math.ceil(((meta/100 * total - p + d) / (1 - meta/100)) - 0.00001) : 0;
@@ -359,4 +359,5 @@
         window.onresize = init;
     </script>
 </body>
+
 </html>
