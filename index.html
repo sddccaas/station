@@ -124,6 +124,25 @@
             box-shadow: 0 5px 15px rgba(255,0,0,0.3);
             transition: 0.3s; text-transform: uppercase;
         }
+
+        /* Botão Dados de Contato na Esquerda */
+        .contact-trigger {
+            position: fixed; bottom: 30px; left: 30px;
+            background: #1a1a1a; color: white;
+            border: 1px solid #333; padding: 15px 25px; border-radius: 15px;
+            font-weight: 900; cursor: pointer; z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .contact-trigger:hover { border-color: var(--getnet-red); transform: scale(1.05); }
+        .light-mode .contact-trigger { background: #fff; color: #111; border-color: #ccc; }
+
+        /* Ajuste do Modal de Contato para ficar enquadrado no canto */
+        #contactModal .modal-content {
+            position: fixed; bottom: 100px; left: 30px; margin: 0;
+            width: 400px; max-width: 90vw; height: auto;
+        }
+
         .pids-sidebar {
             position: fixed; top: 0; right: -500px; width: 480px; height: 100%;
             background: var(--container-bg); border-left: 3px solid var(--getnet-red);
@@ -152,6 +171,7 @@
         <svg width="24" height="24" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
 
+    <button class="contact-trigger" onclick="document.getElementById('contactModal').style.display='block'">Dados de Contato</button>
     <button class="pids-trigger" onclick="togglePids()">PIDS Para SS</button>
 
     <h1><span class="get">Get</span>Hub</h1>
@@ -173,17 +193,6 @@
             <span class="btn-desc">Cálculo de Ciclo Mensal</span>
         </div>
 
-        <div onclick="document.getElementById('contactModal').style.display='block'" class="btn-link" style="border: 1px solid #333;">
-            <span class="btn-title">👤 DADOS DE CONTATO</span>
-            <span class="btn-desc">E-mail e Ramal Profissional</span>
-        </div>
-
-        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
-        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
-        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
-        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
-        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
-        <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
         <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
         <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
         <a href="https://www.google.com" target="_blank" class="btn-link"><span class="btn-title">🔍 GOOGLE</span><span class="btn-desc">Busca</span></a>
@@ -194,9 +203,9 @@
     </div>
 
     <div id="pidsSidebar" class="pids-sidebar">
-        <span class="close-pids" onclick="togglePids()">&times; FECHAR</span>
+        <span class="close-pids" onclick="togglePids()" style="float:left">&times; FECHAR</span>
         <h2 style="color:var(--getnet-red); text-align: center; margin-bottom: 20px; clear: both;">PIDS PARA SS</h2>
-        <input type="text" id="pidsSearch" class="search-box" placeholder="Digite e aperte Enter..." onkeydown="if(event.key === 'Enter') searchPids()">
+        <input type="text" id="pidsSearch" class="search-box" placeholder="Pesquisar..." onkeydown="if(event.key === 'Enter') searchPids()">
         <div id="pidsContent" class="pids-text-area">COLE SEU TEXTO GIGANTE AQUI</div>
     </div>
 
@@ -241,8 +250,8 @@
                 <label>MÁQUINA CONTRATADA</label>
                 <select id="plano" onchange="cA()"><option value="29.90">R$ 29,90</option><option value="79.90">R$ 79,90</option><option value="129.90">R$ 129,90</option></select>
                 <div style="display:flex; gap:15px; margin-top:15px">
-                    <div style="flex:1"><label>DIAS DE USO NO MÊS (MÁX 31)</label><input type="number" id="dUso" value="0" oninput="vA(); cA()"></div>
-                    <div style="flex:1"><label>NÚMERO DE DIAS DO MÊS (MÁX 31)</label><input type="number" id="dTot" value="30" oninput="vA(); cA()"></div>
+                    <div style="flex:1"><label>DIAS DE USO</label><input type="number" id="dUso" value="0" oninput="vA(); cA()"></div>
+                    <div style="flex:1"><label>DIAS DO MÊS</label><input type="number" id="dTot" value="30" oninput="vA(); cA()"></div>
                 </div>
                 <div class="res-box" style="font-size:1.5em">VALOR: <b id="rA" style="color:var(--getnet-red)">R$ 0,00</b></div>
             </div>
@@ -250,13 +259,12 @@
     </div>
 
     <div id="contactModal" class="modal">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content">
             <span class="close" onclick="document.getElementById('contactModal').style.display='none'">&times;</span>
             <h2 style="color:var(--getnet-red); text-align: center;">DADOS PROFISSIONAIS</h2>
             <div class="calc-box" style="margin-top:20px">
                 <p style="margin-bottom:10px; font-size: 0.9em; border-bottom: 1px solid #222; padding-bottom: 5px;"><span style="color: var(--getnet-red); font-weight: bold;">NOME:</span> Gustavo</p>
                 <p style="margin-bottom:10px; font-size: 0.9em; border-bottom: 1px solid #222; padding-bottom: 5px;"><span style="color: var(--getnet-red); font-weight: bold;">E-MAIL:</span> gustavo@getnet.com.br</p>
-                <p style="margin-bottom:10px; font-size: 0.9em; border-bottom: 1px solid #222; padding-bottom: 5px;"><span style="color: var(--getnet-red); font-weight: bold;">SHINEVERSO:</span> @Gustavo</p>
             </div>
         </div>
     </div>
@@ -264,7 +272,7 @@
     <div id="scriptSidebar" class="sidebar">
         <span class="close-sidebar" onclick="toggleSidebar()">&times;</span>
         <h2 style="color:var(--getnet-red); margin-bottom: 15px;">CONSULTA SCRIPTS</h2>
-        <button class="search-box" style="cursor:pointer; background:var(--getnet-red); border:none; font-weight:bold; color:white;" onclick="document.getElementById('fileInput').click()">📁 CARREGAR SCRIPTS.TXT</button>
+        <button class="search-box" onclick="document.getElementById('fileInput').click()">📁 CARREGAR SCRIPTS.TXT</button>
         <div id="copy-toast">SCRIPT COPIADO!</div>
         <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar..." oninput="filterScripts()">
         <div id="script-list"></div>
@@ -284,17 +292,13 @@
             if (firstMark) sidebar.scrollTo({ top: firstMark.offsetTop - 100, behavior: 'smooth' });
         }
 
-        const phrases = ["FOCO NO 10: A SATISFAÇÃO DO CLIENTE É A NOSSA META.", "CADA ATENDIMENTO É UMA OPORTUNIDADE.", "META DADA É META BATIDA!", "TRANSFORME CADA DESAFIO EM UMA SOLUÇÃO EFICIENTE.", "PEQUENOS DETALHES CRIAM GRANDES CONEXÕES."];
+        const phrases = ["FOCO NO 10!", "META DADA É META BATIDA!", "QUALIDADE GETNET."];
         let currentPhrase = 0;
         function startMotivation() {
             const el = document.getElementById('motivation');
             setInterval(() => {
                 el.style.opacity = 0;
-                setTimeout(() => {
-                    currentPhrase = (currentPhrase + 1) % phrases.length;
-                    el.innerText = phrases[currentPhrase];
-                    el.style.opacity = 1;
-                }, 500);
+                setTimeout(() => { currentPhrase = (currentPhrase + 1) % phrases.length; el.innerText = phrases[currentPhrase]; el.style.opacity = 1; }, 500);
             }, 7000);
         }
 
@@ -311,28 +315,19 @@
         function toggleSidebar() { document.getElementById('scriptSidebar').classList.toggle('active'); }
         function loadScripts(i) {
             const f = i.files[0]; const r = new FileReader();
-            r.onload = e => { 
-                const content = e.target.result;
-                rawScripts = content.split('//').map(s => s.split('#')[0].trim()).filter(s => s !== "");
-                displayScripts(rawScripts); 
-            };
+            r.onload = e => { rawScripts = e.target.result.split('//').map(s => s.split('#')[0].trim()).filter(s => s !== ""); displayScripts(rawScripts); };
             r.readAsText(f);
         }
         function displayScripts(s) {
-            const list = document.getElementById('script-list');
-            list.innerHTML = "";
+            const list = document.getElementById('script-list'); list.innerHTML = "";
             s.forEach((text) => {
-                const div = document.createElement('div');
-                div.className = 'script-result';
+                const div = document.createElement('div'); div.className = 'script-result';
                 div.innerHTML = `<p class="script-text">${text}</p>`;
                 div.onclick = () => { navigator.clipboard.writeText(text); };
                 list.appendChild(div);
             });
         }
-        function filterScripts() {
-            const t = document.getElementById('searchInput').value.toLowerCase();
-            displayScripts(rawScripts.filter(s => s.toLowerCase().includes(t)));
-        }
+        function filterScripts() { const t = document.getElementById('searchInput').value.toLowerCase(); displayScripts(rawScripts.filter(s => s.toLowerCase().includes(t))); }
 
         function v(i) { if(i.value < 0) i.value = 0; }
         function vA() { let u = document.getElementById('dUso'); if(u.value < 0) u.value = 0; }
@@ -343,48 +338,28 @@
         }
 
         function c(type) {
-            const p = parseInt(document.getElementById(type+'p').value) || 0, n = parseInt(document.getElementById(type+'n').value) || 0,
-                  d = parseInt(document.getElementById(type+'d').value) || 0, meta = parseInt(document.getElementById(type+'m').value) || 70;
+            const p = parseInt(document.getElementById(type+'p').value) || 0, n = parseInt(document.getElementById(type+'n').value) || 0, d = parseInt(document.getElementById(type+'d').value) || 0, meta = 70;
             const total = p + n + d, nps = total > 0 ? ((p - d) / total) * 100 : 0;
             document.getElementById(type+'nps').innerText = nps.toFixed(1);
-            let faltam = (total > 0 && nps < meta) ? Math.ceil(((meta/100 * total - p + d) / (1 - meta/100)) - 0.00001) : 0;
-            
             if(nps >= meta && !metaBatidaD && type === 'd') { playSuccess(); metaBatidaD = true; } else if (nps < meta && type === 'd') { metaBatidaD = false; }
-            
             document.getElementById('btn-nps-'+type).innerText = nps.toFixed(1) + "%";
-            
             let s = nps >= meta ? "BATIDA 🚀" : (meta-nps <= 10 ? "PERTO ⚠️" : "BAIXO 🏃");
             let color = nps >= meta ? "var(--status-ok)" : (meta-nps <= 10 ? "var(--status-warn)" : "var(--status-crit)");
-            
             let statusBtn = document.getElementById('btn-status-' + type);
             statusBtn.innerText = total > 0 ? s : "STANDBY";
             statusBtn.style.color = total > 0 ? color : "inherit";
-
             document.getElementById('box-'+type).style.borderColor = total > 0 ? color : "#333";
-            document.getElementById(type+'msg').innerText = (total > 0 && nps >= meta) ? "META BATIDA!" : (total > 0 ? "FALTAM " + (faltam < 0 ? 0 : faltam) : "STANDBY");
+            document.getElementById(type+'msg').innerText = (total > 0 && nps >= meta) ? "META BATIDA!" : (total > 0 ? "FALTAM " + Math.ceil(((meta/100 * total - p + d) / (1 - meta/100))) : "STANDBY");
         }
 
         const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
-        let pts = [], lastTime = 0;
-        function init() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            pts = []; for (let i = 0; i < 30; i++) pts.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3});
-        }
-        function anim(time) {
-            if (time - lastTime < 32) { requestAnimationFrame(anim); return; }
-            lastTime = time; ctx.clearRect(0,0,canvas.width,canvas.height); 
-            ctx.strokeStyle = document.body.classList.contains('light-mode') ? "rgba(255,0,0,0.1)" : "rgba(255,255,255,0.12)";
-            pts.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1;
-                for(let j=i+1; j<pts.length; j++) {
-                    let dx = p.x-pts[j].x, dy = p.y-pts[j].y;
-                    if(dx*dx + dy*dy < 50000) { ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
-                }
-            });
-            requestAnimationFrame(anim);
+        let pts = []; function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; pts = []; for (let i = 0; i < 30; i++) pts.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3}); }
+        function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.strokeStyle = document.body.classList.contains('light-mode') ? "rgba(255,0,0,0.1)" : "rgba(255,255,255,0.12)";
+            pts.forEach((p, i) => { p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1;
+                for(let j=i+1; j<pts.length; j++) { let dx = p.x-pts[j].x, dy = p.y-pts[j].y; if(dx*dx + dy*dy < 50000) { ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); } }
+            }); requestAnimationFrame(anim);
         }
         window.onresize = init;
     </script>
 </body>
 </html>
-
