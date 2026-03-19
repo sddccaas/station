@@ -3,322 +3,547 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aderência</title>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Calculadora RV – Concierge Getnet</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#07070c;--sur:#0e0e16;--sur2:#14141e;--red:#ff1744;--rglow:rgba(255,23,68,.35);--rdim:rgba(255,23,68,.1);--bdr:rgba(255,23,68,.15);--bdr2:rgba(255,23,68,.32);--txt:#f0f0f8;--sub:#8888a8;--dim:#383850;--grn:#00e676;--amb:#ffab00;}
-body.L{--bg:#eef0f6;--sur:#ffffff;--sur2:#f5f6fa;--bdr:rgba(200,0,40,.12);--bdr2:rgba(200,0,40,.28);--txt:#0c0c18;--sub:#55556a;--dim:#aaaabc;--rglow:rgba(255,23,68,.18);--rdim:rgba(255,23,68,.07);}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
-#cv{position:fixed;inset:0;z-index:0;pointer-events:none;}
-#vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.6) 100%);}
-body.L #vig{opacity:.2;}
-#page{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 16px 80px;min-height:100vh;}
-.topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--bdr);background:rgba(7,7,12,.75);backdrop-filter:blur(12px);}
-body.L .topbar{background:rgba(238,240,246,.85);}
-.logo{font-family:'Unbounded',sans-serif;font-size:.95rem;font-weight:900;letter-spacing:-.03em;}.logo span{color:var(--red);}
-#clk{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--dim);}#clk-s{color:var(--red);opacity:.5;}
-.cbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--bdr2);background:transparent;color:var(--sub);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}.cbtn:hover{border-color:var(--red);color:var(--red);}.cbtn svg{width:15px;height:15px;fill:currentColor;}
-.hero{padding:88px 0 24px;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.hero-title{font-family:'Unbounded',sans-serif;font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;letter-spacing:-.04em;text-align:center;}.hero-title span{color:var(--red);text-shadow:0 0 28px var(--rglow);}
-.hero-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);}
-.wrap{width:100%;max-width:700px;display:flex;flex-direction:column;gap:12px;}
-.card{background:var(--sur);border:1px solid var(--bdr);border-radius:18px;padding:20px 18px;position:relative;overflow:hidden;}
-.card::after{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,23,68,.2),transparent);}
-.card-title{font-family:'Unbounded',sans-serif;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin-bottom:14px;}
-.jtoggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.jbtn{padding:13px;border-radius:13px;border:1px solid var(--bdr);background:transparent;color:var(--sub);font-family:'Unbounded',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .22s;display:flex;flex-direction:column;align-items:center;gap:3px;}
-.jbtn small{font-family:'DM Mono',monospace;font-size:8.5px;font-weight:400;letter-spacing:.1em;opacity:.7;}
-.jbtn.on{background:var(--rdim);color:var(--red);border-color:var(--bdr2);box-shadow:0 0 20px var(--rdim);}
-.tinp{width:100%;padding:11px 8px;background:var(--sur2);border:1px solid var(--bdr2);border-radius:10px;color:var(--txt);font-family:'DM Mono',monospace;font-size:13px;text-align:center;outline:none;transition:border-color .2s,box-shadow .2s;}
-body.L .tinp{background:#f5f6fa;}
-.tinp:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--rdim);}
-.tinp.prev{background:rgba(255,255,255,.03);border-color:var(--bdr);color:var(--sub);}
-body.L .tinp.prev{background:rgba(0,0,0,.04);}
-.tinp.ok{border-color:rgba(0,230,118,.5);}
-.tinp.bad{border-color:rgba(255,23,68,.7);}
-.pausa-bloco{margin-bottom:10px;border:1px solid var(--bdr);border-radius:14px;overflow:hidden;}
-.pausa-bloco:last-child{margin-bottom:0;}
-.pausa-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;background:rgba(255,255,255,.02);}
-body.L .pausa-top{background:rgba(0,0,0,.03);}
-.pausa-nome{font-family:'Unbounded',sans-serif;font-size:.57rem;font-weight:700;letter-spacing:.04em;}
-.pausa-dur{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-top:2px;}
-.pausa-badge{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);transition:color .3s,border-color .3s;}
-body.L .pausa-badge{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.1);}
-.pausa-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;padding:10px 14px 14px;}
-.pausa-col{display:flex;flex-direction:column;gap:4px;}
-.pausa-lbl{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--sub);}
-/* particular */
-.pp-bloco{border:1px solid rgba(255,23,68,.25);border-radius:14px;overflow:hidden;background:rgba(255,23,68,.04);}
-.pp-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;}
-.pp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:4px 14px 14px;}
-.pp-col{display:flex;flex-direction:column;gap:4px;}
-.pp-lbl{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,23,68,.7);}
-/* resultado */
-.res-card{background:var(--sur);border:1px solid var(--bdr);border-radius:18px;padding:20px 18px;position:relative;overflow:hidden;transition:border-color .4s,box-shadow .4s;}
-.res-card::after{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,23,68,.2),transparent);}
-.pct-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:8px;}
-.pct-big{font-family:'Unbounded',sans-serif;font-size:3.2rem;font-weight:900;line-height:1;transition:color .3s;}
-.pct-lbl{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-bottom:6px;}
-.bar-track{width:100%;height:7px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:14px;}
-body.L .bar-track{background:rgba(0,0,0,.08);}
-.bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1),background .5s;}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
-.metric{background:var(--sur2);border-radius:11px;padding:10px 8px;text-align:center;}
-body.L .metric{background:#f5f6fa;}
-.metric-lbl{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:5px;line-height:1.3;}
-.metric-val{font-family:'Unbounded',sans-serif;font-size:.88rem;font-weight:700;}
-.info-box{padding:11px 13px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--bdr);font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:var(--sub);line-height:1.9;}
-body.L .info-box{background:rgba(0,0,0,.03);}.info-box b{color:var(--txt);}
-.alerta{margin-top:10px;padding:11px 13px;border-radius:10px;background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.22);border-left:3px solid var(--red);font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:var(--red);line-height:1.9;display:none;}
-::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:99px;}::-webkit-scrollbar-thumb:hover{background:var(--red);}
+  :root {
+    --bg: #050d1a;
+    --card: #0b1a2e;
+    --green: #2dff6e;
+    --blue: #1a8fff;
+    --teal: #00d4b4;
+    --yellow: #f5c842;
+    --red: #ff4d6d;
+    --text: #e8f4ff;
+    --muted: #6a8baa;
+    --border: rgba(255,255,255,0.07);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%; right: -20%;
+    width: 60vw; height: 60vw;
+    background: radial-gradient(circle, rgba(26,143,255,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  header {
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(11,26,46,0.8);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .badge {
+    background: linear-gradient(135deg, var(--green), var(--teal));
+    border-radius: 10px; padding: 7px 14px;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 13px; color: #050d1a; letter-spacing: 1px;
+  }
+  header h1 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+  header p { font-size: 12px; color: var(--muted); }
+  .main { max-width: 880px; margin: 0 auto; padding: 36px 24px 80px; display: flex; flex-direction: column; gap: 28px; }
+  .stitle {
+    font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 2.5px; text-transform: uppercase; color: var(--green); margin-bottom: 14px;
+  }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px; }
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .field label { font-size: 12px; color: var(--muted); font-weight: 500; display: block; margin-bottom: 7px; }
+  input[type=number], select {
+    width: 100%; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+    padding: 13px 16px; color: var(--text); font-size: 16px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    outline: none; transition: border-color .2s, background .2s;
+    -moz-appearance: textfield;
+  }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input:focus, select:focus { border-color: var(--blue); background: rgba(26,143,255,0.07); }
+  select option { background: #0b1a2e; }
+  .badge-pts {
+    margin-top: 9px; padding: 9px 13px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; display: none;
+    background: rgba(45,255,110,0.1); color: var(--green);
+    border: 1px solid rgba(45,255,110,0.2);
+  }
+  .badge-pts.show { display: block; }
+  .pval { font-size: 20px; font-weight: 800; font-family: 'Syne', sans-serif; }
+
+  /* Deflators */
+  .def-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .def-item {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 10px; cursor: pointer;
+    transition: all .2s; text-align: center; user-select: none;
+  }
+  .def-item .em { font-size: 22px; margin-bottom: 5px; }
+  .def-item .dl { font-size: 12px; font-weight: 600; }
+  .def-item .dp { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .def-item.sel-none { border-color: var(--green); background: rgba(45,255,110,0.07); }
+  .def-item.sel-adv { border-color: var(--yellow); background: rgba(245,200,66,0.07); }
+  .def-item.sel-susp { border-color: var(--red); background: rgba(255,77,109,0.07); }
+  .def-item.sel-jcausa { border-color: #888; background: rgba(100,100,100,0.1); }
+
+  /* Result */
+  .result-card {
+    background: linear-gradient(135deg, #0b2240 0%, #081730 100%);
+    border: 1px solid rgba(45,255,110,0.2);
+    border-radius: 24px; padding: 36px; position: relative; overflow: hidden;
+  }
+  .result-card::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(45,255,110,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .res-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .res-header h2 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+  .res-header p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .ftag {
+    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800;
+    letter-spacing: 1px; padding: 5px 14px; border-radius: 100px;
+  }
+  .ftag.champion { background: rgba(245,200,66,0.15); color: var(--yellow); border: 1px solid rgba(245,200,66,0.3); }
+  .ftag.diamante { background: rgba(0,212,180,0.12); color: var(--teal); border: 1px solid rgba(0,212,180,0.25); }
+  .ftag.ouro { background: rgba(255,180,50,0.12); color: #ffb432; border: 1px solid rgba(255,180,50,0.3); }
+  .ftag.prata { background: rgba(180,200,220,0.1); color: #b4c8dc; border: 1px solid rgba(180,200,220,0.2); }
+  .ftag.bronze { background: rgba(180,120,80,0.12); color: #cd7f32; border: 1px solid rgba(180,120,80,0.25); }
+  .ftag.sem { background: rgba(255,77,109,0.1); color: var(--red); border: 1px solid rgba(255,77,109,0.2); }
+
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+  .bd-item { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+  .bd-item .bl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .bd-item .bv { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--green); }
+  .bd-item .bs { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .res-boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+  .rb { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+  .rb.hi { border-color: rgba(45,255,110,0.25); background: rgba(45,255,110,0.05); }
+  .rb .rl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing:.5px; margin-bottom:7px; }
+  .rb .rv { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--green); }
+  .rb .rs { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .def-warn {
+    padding: 13px 16px; border-radius: 11px; font-size: 13px; color: var(--red);
+    background: rgba(255,77,109,0.08); border: 1px solid rgba(255,77,109,0.2);
+    display: none; margin-bottom: 16px;
+  }
+  .def-warn.show { display: block; }
+
+  .final-box {
+    text-align: center; padding: 28px; border-radius: 18px;
+    background: rgba(45,255,110,0.08); border: 1px solid rgba(45,255,110,0.2);
+  }
+  .final-box .fl { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .final-box .fv { font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800; color: var(--green); line-height: 1; }
+  .final-box .fs { font-size: 13px; color: var(--muted); margin-top: 8px; }
+
+  /* Ref table */
+  .rtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rtable th { color: var(--muted); font-size: 11px; letter-spacing:.5px; text-transform: uppercase; padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+  .rtable td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .rtable tr:last-child td { border-bottom: none; }
+
+  .table3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .tbox { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+  .tbox h3 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+
+  @media(max-width:680px) {
+    .g2,.g3,.def-grid,.breakdown,.res-boxes,.table3 { grid-template-columns: 1fr 1fr; }
+    .def-grid { grid-template-columns: repeat(2,1fr); }
+    .final-box .fv { font-size: 36px; }
+    header { padding: 16px 20px; }
+    .main { padding: 24px 16px 60px; }
+  }
 </style>
 </head>
 <body>
-<canvas id="cv"></canvas><div id="vig"></div>
-<div class="topbar">
-  <div class="logo"><span>Ader</span>ência</div>
-  <div id="clk"><span id="clk-hm">00:00</span><span id="clk-s">:00</span></div>
-  <button class="cbtn" onclick="toggleTheme()"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
-</div>
+<header>
+  <div class="badge">modo RV</div>
+  <div>
+    <h1>Calculadora de RV</h1>
+    <p>Concierge Getnet — Especialistas</p>
+  </div>
+</header>
 
-<div id="page">
-  <div class="hero">
-    <div class="hero-title">Calculadora de <span>Aderência</span></div>
-    <div class="hero-sub">Genesys Cloud · preencha com os horários do seu cronograma</div>
+<div class="main">
+
+  <!-- Reference tables -->
+  <div>
+    <p class="stitle">📊 Tabelas de Indicadores</p>
+    <div class="card">
+      <div class="table3">
+        <div class="tbox">
+          <h3 style="color:var(--blue)">🔵 TMO — Estabilidade</h3>
+          <table class="rtable">
+            <thead><tr><th>De</th><th>Até</th><th>Pts</th></tr></thead>
+            <tbody>
+              <tr><td>107,00%</td><td>103,01%</td><td>5</td></tr>
+              <tr><td>103,00%</td><td>100,01%</td><td>15</td></tr>
+              <tr><td>100,00%</td><td>96,01%</td><td>30</td></tr>
+              <tr><td>96,00%</td><td>90,01%</td><td>50</td></tr>
+              <tr><td>90,00%</td><td>0%</td><td>75</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:11px;color:var(--muted);margin-top:10px;">Cálculo: Realizado ÷ Meta</p>
+        </div>
+        <div class="tbox">
+          <h3 style="color:var(--teal)">🟢 Inconformidade — Eficiência</h3>
+          <table class="rtable">
+            <thead><tr><th>De</th><th>Até</th><th>Pts</th></tr></thead>
+            <tbody>
+              <tr><td>2,00%</td><td>1,51%</td><td>5</td></tr>
+              <tr><td>1,50%</td><td>1,01%</td><td>15</td></tr>
+              <tr><td>1,00%</td><td>0,95%</td><td>30</td></tr>
+              <tr><td>0,94%</td><td>0,90%</td><td>50</td></tr>
+              <tr><td>0,89%</td><td>0,00%</td><td>75</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbox">
+          <h3 style="color:var(--green)">🟩 NPS — Qualidade</h3>
+          <table class="rtable">
+            <thead><tr><th>De</th><th>Até</th><th>Pts</th></tr></thead>
+            <tbody>
+              <tr><td>-11,00%</td><td>-7,01%</td><td>20</td></tr>
+              <tr><td>-7,00%</td><td>-0,01%</td><td>45</td></tr>
+              <tr><td>0,00%</td><td>6,99%</td><td>90</td></tr>
+              <tr><td>7,00%</td><td>8,99%</td><td>155</td></tr>
+              <tr><td>9,00%</td><td>100%</td><td>225</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:11px;color:var(--muted);margin-top:10px;">Atingimento = Realizado − Meta</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="wrap">
-
-    <!-- JORNADA -->
+  <!-- Inputs -->
+  <div>
+    <p class="stitle">✏️ Seus Resultados do Mês</p>
     <div class="card">
-      <div class="card-title">Jornada</div>
-      <div class="jtoggle">
-        <button class="jbtn on" id="btn-j6" onclick="setJornada('J6')">J6 <small>6h20 · refeição 20min</small></button>
-        <button class="jbtn"    id="btn-j8" onclick="setJornada('J8')">J8 <small>8h12 · almoço 1h</small></button>
-      </div>
-      <p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--sub);letter-spacing:.08em;line-height:1.7;">
-        Olhe seu cronograma no Genesys e preencha os horários previstos. Conforme o dia passa, preencha os reais.
-      </p>
-    </div>
-
-    <!-- PAUSAS PROGRAMADAS -->
-    <div class="card">
-      <div class="card-title">Pausas programadas</div>
-
-      <div class="pausa-bloco">
-        <div class="pausa-top">
-          <div><div class="pausa-nome">⏸ 1ª Pausa</div><div class="pausa-dur">duração oficial: 10 min</div></div>
-          <div class="pausa-badge" id="b1">—</div>
+      <div class="g2">
+        <div>
+          <div class="field" style="margin-bottom:14px;">
+            <label>TMO Realizado (segundos)</label>
+            <input type="number" id="tmo-real" placeholder="ex: 590" min="0" oninput="calc()">
+          </div>
+          <div class="field">
+            <label>Meta TMO (segundos)</label>
+            <input type="number" id="tmo-meta" placeholder="ex: 641" min="1" oninput="calc()">
+          </div>
+          <div class="badge-pts" id="tmo-b"></div>
         </div>
-        <div class="pausa-grid">
-          <div class="pausa-col"><div class="pausa-lbl">Saída prevista</div><input class="tinp prev" type="time" id="p1-sp" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Saída real</div><input class="tinp" type="time" id="p1-sr" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Retorno previsto</div><input class="tinp prev" type="time" id="p1-rp" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Retorno real</div><input class="tinp" type="time" id="p1-rr" oninput="calc()"></div>
+        <div>
+          <div class="field" style="margin-bottom:14px;">
+            <label>Inconformidade Realizada (%)</label>
+            <input type="number" id="inc-real" placeholder="ex: 0.95" step="0.01" min="0" oninput="calc()">
+          </div>
+          <div class="badge-pts" id="inc-b"></div>
+          <div class="field" style="margin-top:14px;">
+            <label>Elegível no mês?</label>
+            <select id="elegivel" onchange="calc()">
+              <option value="sim">✅ Sim — elegível</option>
+              <option value="nao">❌ Não — inelegível</option>
+            </select>
+          </div>
         </div>
-      </div>
-
-      <div class="pausa-bloco">
-        <div class="pausa-top">
-          <div><div class="pausa-nome" id="p2-nome">🍽 Refeição</div><div class="pausa-dur" id="p2-dur">duração oficial: 20 min</div></div>
-          <div class="pausa-badge" id="b2">—</div>
+        <div>
+          <div class="field" style="margin-bottom:14px;">
+            <label>NPS Realizado (%)</label>
+            <input type="number" id="nps-real" placeholder="ex: 87" step="0.01" oninput="calc()">
+          </div>
+          <div class="field">
+            <label>Meta NPS (%)</label>
+            <input type="number" id="nps-meta" placeholder="ex: 82" step="0.01" oninput="calc()">
+          </div>
+          <div class="badge-pts" id="nps-b"></div>
         </div>
-        <div class="pausa-grid">
-          <div class="pausa-col"><div class="pausa-lbl">Saída prevista</div><input class="tinp prev" type="time" id="p2-sp" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Saída real</div><input class="tinp" type="time" id="p2-sr" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Retorno previsto</div><input class="tinp prev" type="time" id="p2-rp" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Retorno real</div><input class="tinp" type="time" id="p2-rr" oninput="calc()"></div>
-        </div>
-      </div>
-
-      <div class="pausa-bloco">
-        <div class="pausa-top">
-          <div><div class="pausa-nome">⏸ 2ª Pausa</div><div class="pausa-dur">duração oficial: 10 min</div></div>
-          <div class="pausa-badge" id="b3">—</div>
-        </div>
-        <div class="pausa-grid">
-          <div class="pausa-col"><div class="pausa-lbl">Saída prevista</div><input class="tinp prev" type="time" id="p3-sp" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Saída real</div><input class="tinp" type="time" id="p3-sr" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Retorno previsto</div><input class="tinp prev" type="time" id="p3-rp" oninput="calc()"></div>
-          <div class="pausa-col"><div class="pausa-lbl">Retorno real</div><input class="tinp" type="time" id="p3-rr" oninput="calc()"></div>
+        <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:12px;">
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:16px;">
+            <p style="font-size:11px;color:var(--muted);margin-bottom:6px;">💡 Como calcular TMO</p>
+            <p style="font-size:12px;">TMO% = Realizado ÷ Meta<br>Ex: 590s ÷ 641s = 92,04%</p>
+          </div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:16px;">
+            <p style="font-size:11px;color:var(--muted);margin-bottom:6px;">💡 Como calcular NPS</p>
+            <p style="font-size:12px;">Atingimento = Real − Meta<br>Ex: 87% − 82% = +5pp</p>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- PAUSA PARTICULAR -->
-    <div class="card">
-      <div class="card-title">Pausa particular</div>
-      <div class="pp-bloco">
-        <div class="pp-top">
-          <div><div class="pausa-nome" style="color:var(--red);">🚨 Fora do cronograma</div><div class="pausa-dur">cada minuto aqui queima direto</div></div>
-          <div class="pausa-badge" id="pp-badge">—</div>
-        </div>
-        <div class="pp-grid">
-          <div class="pp-col"><div class="pp-lbl">Saída</div><input class="tinp" type="time" id="pp-s" oninput="calc()"></div>
-          <div class="pp-col"><div class="pp-lbl">Retorno</div><input class="tinp" type="time" id="pp-r" oninput="calc()"></div>
-          <div class="pp-col"><div class="pp-lbl">Ou duração (min)</div><input class="tinp" type="number" id="pp-min" min="0" placeholder="0" oninput="calc()"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RESULTADO -->
-    <div class="res-card" id="res-card">
-      <div class="card-title">Resultado</div>
-      <div class="pct-row">
-        <div><div class="pct-lbl">Aderência</div><div class="pct-big" id="pct-big">—</div></div>
-        <div style="text-align:right;"><div class="pct-lbl">Meta</div><div style="font-family:'Unbounded',sans-serif;font-size:1.3rem;font-weight:700;color:var(--sub);">90%</div></div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" id="bar" style="width:0%;"></div></div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-lbl">Turno</div><div class="metric-val" id="m-turno">—</div></div>
-        <div class="metric"><div class="metric-lbl">Limite extra</div><div class="metric-val" id="m-limite">—</div></div>
-        <div class="metric"><div class="metric-lbl">Queimou</div><div class="metric-val" id="m-queimou">0min</div></div>
-        <div class="metric"><div class="metric-lbl">Pode ainda</div><div class="metric-val" id="m-pode">—</div></div>
-      </div>
-      <div class="info-box" id="info-box">Preencha os horários previstos do seu cronograma para começar.</div>
-      <div class="alerta" id="alerta"></div>
-    </div>
-
   </div>
+
+  <!-- Deflators -->
+  <div>
+    <p class="stitle">⚠️ Deflator de Elegibilidade</p>
+    <div class="card">
+      <div class="def-grid">
+        <div class="def-item sel-none" data-d="none" onclick="selDef('none')">
+          <div class="em">✅</div>
+          <div class="dl">Nenhum</div>
+          <div class="dp">Sem deflator</div>
+        </div>
+        <div class="def-item" data-d="adv" onclick="selDef('adv')">
+          <div class="em">⚠️</div>
+          <div class="dl">Advertência</div>
+          <div class="dp">−20%</div>
+        </div>
+        <div class="def-item" data-d="susp" onclick="selDef('susp')">
+          <div class="em">🚫</div>
+          <div class="dl">Suspensão</div>
+          <div class="dp">−50%</div>
+        </div>
+        <div class="def-item" data-d="jcausa" onclick="selDef('jcausa')">
+          <div class="em">❌</div>
+          <div class="dl">Justa Causa</div>
+          <div class="dp">−100%</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:14px;">O deflator não é cumulativo — aplica-se o evento de maior peso. Advertência e Suspensão no mesmo mês → aplica Suspensão.</p>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div>
+    <p class="stitle">💰 Resultado</p>
+    <div class="result-card">
+      <div class="res-header">
+        <div>
+          <h2>RV Mensal Calculada</h2>
+          <p>Concierge Getnet — Especialista</p>
+        </div>
+        <div class="ftag sem" id="ftag">—</div>
+      </div>
+
+      <div class="breakdown">
+        <div class="bd-item">
+          <div class="bl">TMO (Estabilidade)</div>
+          <div class="bv" id="bd-tmo-pts">—</div>
+          <div class="bs" id="bd-tmo-sub">pts</div>
+        </div>
+        <div class="bd-item">
+          <div class="bl">Inconformidade (Eficiência)</div>
+          <div class="bv" id="bd-inc-pts">—</div>
+          <div class="bs" id="bd-inc-sub">pts</div>
+        </div>
+        <div class="bd-item">
+          <div class="bl">NPS (Qualidade)</div>
+          <div class="bv" id="bd-nps-pts">—</div>
+          <div class="bs" id="bd-nps-sub">pts</div>
+        </div>
+      </div>
+
+      <div class="res-boxes">
+        <div class="rb">
+          <div class="rl">Total de Pontos</div>
+          <div class="rv" id="r-pts">—</div>
+          <div class="rs">soma dos indicadores</div>
+        </div>
+        <div class="rb">
+          <div class="rl">Faixa Atingida</div>
+          <div class="rv" id="r-faixa" style="font-size:17px;">—</div>
+          <div class="rs" id="r-range">—</div>
+        </div>
+        <div class="rb hi">
+          <div class="rl">Multiplicador</div>
+          <div class="rv" id="r-mult">R$ —</div>
+          <div class="rs">por ponto</div>
+        </div>
+      </div>
+
+      <div class="def-warn" id="def-warn"></div>
+
+      <div class="final-box">
+        <div class="fl">Valor Final da sua RV Mensal</div>
+        <div class="fv" id="final-v">R$ —</div>
+        <div class="fs" id="final-s">Preencha os campos acima para calcular</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faixas reference -->
+  <div>
+    <p class="stitle">📋 Tabela de Faixas — RV Mensal</p>
+    <div class="card">
+      <table class="rtable">
+        <thead><tr><th>Faixa</th><th>Pontos</th><th>Multiplicador / Ponto</th><th>Valor Máximo</th></tr></thead>
+        <tbody>
+          <tr><td>🥇 Champion</td><td>351 – 375</td><td>R$ 2,00</td><td>R$ 750,00</td></tr>
+          <tr><td>💎 Diamante</td><td>301 – 350,99</td><td>R$ 1,50</td><td>R$ 526,00</td></tr>
+          <tr><td>🥈 Ouro</td><td>151 – 300,99</td><td>R$ 1,00</td><td>R$ 301,00</td></tr>
+          <tr><td>🥉 Prata</td><td>51 – 150,99</td><td>R$ 0,75</td><td>R$ 113,00</td></tr>
+          <tr><td>🔵 Bronze</td><td>0 – 50,99</td><td>R$ 0,50</td><td>R$ 25,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <script>
-var cv=document.getElementById('cv'),ctx=cv.getContext('2d'),pts=[],N=50,CONN=140,MC=180,curX=-200,curY=-200;
-function resizeCv(){cv.width=innerWidth;cv.height=innerHeight;pts=[];for(var i=0;i<N;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.5+.4});}
-function drawCv(){ctx.clearRect(0,0,cv.width,cv.height);for(var i=0;i<pts.length;i++){pts[i].x+=pts[i].vx;pts[i].y+=pts[i].vy;if(pts[i].x<0||pts[i].x>cv.width)pts[i].vx*=-1;if(pts[i].y<0||pts[i].y>cv.height)pts[i].vy*=-1;}for(var i=0;i<pts.length;i++){for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<CONN){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(255,23,68,'+((1-d/CONN)*.2)+')';ctx.lineWidth=.6;ctx.stroke();}}var dx2=pts[i].x-curX,dy2=pts[i].y-curY,d2=Math.sqrt(dx2*dx2+dy2*dy2);if(d2<MC){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(curX,curY);ctx.strokeStyle='rgba(255,55,80,'+((1-d2/MC)*.45)+')';ctx.lineWidth=.8;ctx.stroke();}}for(var i=0;i<pts.length;i++){var near=Math.sqrt(Math.pow(pts[i].x-curX,2)+Math.pow(pts[i].y-curY,2))<MC;ctx.beginPath();ctx.arc(pts[i].x,pts[i].y,near?pts[i].r*2.4:pts[i].r,0,Math.PI*2);if(near){ctx.shadowBlur=12;ctx.shadowColor='rgba(255,23,68,.8)';}ctx.fillStyle=near?'rgba(255,80,100,.9)':'rgba(255,23,68,.5)';ctx.fill();ctx.shadowBlur=0;}requestAnimationFrame(drawCv);}
-window.addEventListener('resize',resizeCv);document.addEventListener('mousemove',function(e){curX=e.clientX;curY=e.clientY;});
-resizeCv();drawCv();
+let deflator = 'none';
 
-function tickClock(){var n=new Date(),hh=String(n.getHours()).padStart(2,'0'),mm=String(n.getMinutes()).padStart(2,'0'),ss=String(n.getSeconds()).padStart(2,'0');document.getElementById('clk-hm').textContent=hh+':'+mm;document.getElementById('clk-s').textContent=':'+ss;setTimeout(tickClock,1000-n.getMilliseconds());}
-tickClock();
-function toggleTheme(){document.body.classList.toggle('L');}
-
-var jornada='J6';
-var durOfic={J6:[10,20,10],J8:[10,60,10]};
-var totalTurno={J6:380,J8:492};
-
-function toMin(v){if(!v)return null;var p=v.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
-function hm(m){if(m<=0)return'0min';var h=Math.floor(m/60),mi=m%60;if(h>0&&mi>0)return h+'h '+mi+'min';if(h>0)return h+'h';return mi+'min';}
-
-function setJornada(j){
-  jornada=j;
-  document.getElementById('btn-j6').classList.toggle('on',j==='J6');
-  document.getElementById('btn-j8').classList.toggle('on',j==='J8');
-  document.getElementById('p2-nome').textContent=j==='J8'?'🍽 Almoço':'🍽 Refeição';
-  document.getElementById('p2-dur').textContent='duração oficial: '+durOfic[j][1]+' min';
-  ['p1-sr','p1-rr','p2-sr','p2-rr','p3-sr','p3-rr'].forEach(function(id){
-    document.getElementById(id).value='';document.getElementById(id).className='tinp';
-  });
+function selDef(d) {
+  deflator = d;
+  document.querySelectorAll('.def-item').forEach(el => el.className = 'def-item');
+  const cls = d === 'none' ? 'sel-none' : d === 'adv' ? 'sel-adv' : d === 'susp' ? 'sel-susp' : 'sel-jcausa';
+  document.querySelector(`.def-item[data-d="${d}"]`).classList.add(cls);
   calc();
 }
 
-function calc(){
-  var dur=durOfic[jornada];
-  var total=totalTurno[jornada];
-  var pausaOfic=dur[0]+dur[1]+dur[2];
-  var prodEsp=total-pausaOfic;
-  var limiteQ=Math.floor(prodEsp*0.10);
-
-  var rows=[['p1-sp','p1-sr','p1-rp','p1-rr'],['p2-sp','p2-sr','p2-rp','p2-rr'],['p3-sp','p3-sr','p3-rp','p3-rr']];
-  var badges=['b1','b2','b3'];
-  var nomes=['1ª Pausa','Refeição/Almoço','2ª Pausa'];
-  var totalQ=0,alertas=[],algumPreenchido=false;
-
-  rows.forEach(function(row,i){
-    var sp=toMin(document.getElementById(row[0]).value);
-    var sr=toMin(document.getElementById(row[1]).value);
-    var rp=toMin(document.getElementById(row[2]).value);
-    var rr=toMin(document.getElementById(row[3]).value);
-    var queimou=0,dets=[];
-
-    if(sp!==null&&rp===null){
-      var autoRp=sp+dur[i];
-      document.getElementById(row[2]).value=String(Math.floor(autoRp/60)%24).padStart(2,'0')+':'+String(autoRp%60).padStart(2,'0');
-      rp=autoRp;
-    }
-    if(sr!==null||rr!==null) algumPreenchido=true;
-
-    if(sp!==null&&sr!==null){
-      var d=sr-sp;
-      if(d>0){queimou+=d;dets.push('saiu '+d+'min atrasado');}
-      else if(d<0){queimou+=Math.abs(d);dets.push('saiu '+Math.abs(d)+'min antes');}
-      document.getElementById(row[1]).className='tinp '+(d!==0?'bad':'ok');
-    } else {document.getElementById(row[1]).className='tinp';}
-
-    if(rp!==null&&rr!==null){
-      var d2=rr-rp;
-      if(d2>0){queimou+=d2;dets.push('voltou '+d2+'min atrasado');}
-      document.getElementById(row[3]).className='tinp '+(d2>0?'bad':'ok');
-    } else {document.getElementById(row[3]).className='tinp';}
-
-    totalQ+=queimou;
-    var bdg=document.getElementById(badges[i]);
-    if(queimou>0){bdg.textContent='+'+queimou+'min';bdg.style.color='#ff1744';bdg.style.borderColor='rgba(255,23,68,.35)';alertas.push(nomes[i]+': '+dets.join(' + '));}
-    else if(sr!==null||rr!==null){bdg.textContent='✓ ok';bdg.style.color='#00e676';bdg.style.borderColor='rgba(0,230,118,.35)';}
-    else{bdg.textContent='—';bdg.style.color='var(--sub)';bdg.style.borderColor='rgba(255,255,255,.07)';}
-  });
-
-  // pausa particular
-  var ppS=toMin(document.getElementById('pp-s').value);
-  var ppR=toMin(document.getElementById('pp-r').value);
-  var ppM=parseInt(document.getElementById('pp-min').value)||0;
-  var ppQueimou=0;
-
-  if(ppS!==null&&ppR!==null&&ppR>ppS){
-    ppQueimou=ppR-ppS;
-  } else if(ppM>0){
-    ppQueimou=ppM;
-  }
-
-  var ppBdg=document.getElementById('pp-badge');
-  if(ppQueimou>0){
-    totalQ+=ppQueimou;algumPreenchido=true;
-    ppBdg.textContent='+'+ppQueimou+'min';ppBdg.style.color='#ff1744';ppBdg.style.borderColor='rgba(255,23,68,.35)';
-    alertas.push('Pausa particular: '+ppQueimou+'min fora da fila');
-  } else {
-    ppBdg.textContent='—';ppBdg.style.color='var(--sub)';ppBdg.style.borderColor='rgba(255,255,255,.07)';
-  }
-
-  var podeAinda=Math.max(0,limiteQ-totalQ);
-  var prodReal=prodEsp-totalQ;
-  var ader=Math.min(100,Math.max(0,(prodReal/prodEsp)*100));
-  var cor=ader>=90?'#00e676':ader>=80?'#ffab00':'#ff1744';
-
-  document.getElementById('m-turno').textContent=hm(total);
-  document.getElementById('m-limite').textContent=hm(limiteQ);
-  document.getElementById('m-queimou').textContent=hm(totalQ);
-  document.getElementById('m-queimou').style.color=totalQ>0?'#ffab00':'var(--sub)';
-  document.getElementById('m-pode').textContent=podeAinda>0?hm(podeAinda):'⚠ esgotado';
-  document.getElementById('m-pode').style.color=podeAinda>0?'#00e676':'#ff1744';
-
-  if(algumPreenchido){
-    document.getElementById('pct-big').textContent=ader.toFixed(1)+'%';
-    document.getElementById('pct-big').style.color=cor;
-    document.getElementById('bar').style.width=Math.min(100,ader)+'%';
-    document.getElementById('bar').style.background=cor;
-    document.getElementById('info-box').innerHTML=
-      'Pausas oficiais: <b>'+hm(pausaOfic)+'</b> &nbsp;·&nbsp; '+
-      'Limite extra (10%): <b>'+hm(limiteQ)+'</b> &nbsp;·&nbsp; '+
-      'Queimou: <b style="color:'+(totalQ>limiteQ?'#ff1744':'inherit')+'">'+hm(totalQ)+'</b>';
-    var rc=document.getElementById('res-card');
-    if(ader>=90){rc.style.borderColor='#00e676';rc.style.boxShadow='0 0 36px rgba(0,230,118,.13)';}
-    else if(ader>=80){rc.style.borderColor='#ffab00';rc.style.boxShadow='0 0 36px rgba(255,171,0,.13)';}
-    else{rc.style.borderColor='#ff1744';rc.style.boxShadow='0 0 36px rgba(255,23,68,.17)';}
-  } else {
-    document.getElementById('pct-big').textContent='—';
-    document.getElementById('pct-big').style.color='var(--sub)';
-    document.getElementById('bar').style.width='0%';
-    document.getElementById('info-box').textContent='Preencha os horários previstos do seu cronograma para começar.';
-    var rc=document.getElementById('res-card');rc.style.borderColor='';rc.style.boxShadow='';
-  }
-
-  var alertDiv=document.getElementById('alerta');
-  if(alertas.length){alertDiv.style.display='block';alertDiv.innerHTML='⚠ EXCESSOS DETECTADOS<br>'+alertas.join('<br>');}
-  else{alertDiv.style.display='none';}
+function getTmoPts(real, meta) {
+  const r = real / meta;
+  if (r > 1.0300) return { pts: 5, r };
+  if (r > 1.0000) return { pts: 15, r };
+  if (r > 0.9600) return { pts: 30, r };
+  if (r > 0.9000) return { pts: 50, r };
+  return { pts: 75, r };
 }
 
-setJornada('J6');
+function getIncPts(v) {
+  if (v >= 1.51) return { pts: 5, v };
+  if (v >= 1.01) return { pts: 15, v };
+  if (v >= 0.95) return { pts: 30, v };
+  if (v >= 0.90) return { pts: 50, v };
+  return { pts: 75, v };
+}
+
+function getNpsPts(real, meta) {
+  const diff = real - meta;
+  if (diff < -7.00) return { pts: 20, diff };
+  if (diff < 0)     return { pts: 45, diff };
+  if (diff < 7.00)  return { pts: 90, diff };
+  if (diff < 9.00)  return { pts: 155, diff };
+  return { pts: 225, diff };
+}
+
+function getFaixa(pts) {
+  if (pts >= 351) return { name: 'Champion', emoji: '🥇', cls: 'champion', mult: 2.0, range: '351 – 375 pts' };
+  if (pts >= 301) return { name: 'Diamante', emoji: '💎', cls: 'diamante', mult: 1.5, range: '301 – 350,99 pts' };
+  if (pts >= 151) return { name: 'Ouro',     emoji: '🥈', cls: 'ouro',     mult: 1.0, range: '151 – 300,99 pts' };
+  if (pts >= 51)  return { name: 'Prata',    emoji: '🥉', cls: 'prata',    mult: 0.75, range: '51 – 150,99 pts' };
+  return              { name: 'Bronze',   emoji: '🔵', cls: 'bronze',   mult: 0.5, range: '0 – 50,99 pts' };
+}
+
+function brl(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+
+function calc() {
+  const tmoReal = parseFloat(document.getElementById('tmo-real').value);
+  const tmoMeta = parseFloat(document.getElementById('tmo-meta').value);
+  const incVal  = parseFloat(document.getElementById('inc-real').value);
+  const npsReal = parseFloat(document.getElementById('nps-real').value);
+  const npsMeta = parseFloat(document.getElementById('nps-meta').value);
+  const elegivel = document.getElementById('elegivel').value;
+
+  let tmoPts = 0, incPts = 0, npsPts = 0;
+  let hasAny = false;
+
+  // TMO
+  const tmoB = document.getElementById('tmo-b');
+  if (!isNaN(tmoReal) && !isNaN(tmoMeta) && tmoMeta > 0) {
+    hasAny = true;
+    const { pts, r } = getTmoPts(tmoReal, tmoMeta);
+    tmoPts = pts;
+    document.getElementById('bd-tmo-pts').textContent = pts;
+    document.getElementById('bd-tmo-sub').textContent = `pts — ${(r * 100).toFixed(2)}% da meta`;
+    tmoB.className = 'badge-pts show';
+    tmoB.innerHTML = `<span class="pval">${pts}</span> pts &nbsp;·&nbsp; ${(r*100).toFixed(2)}% da meta`;
+  } else {
+    document.getElementById('bd-tmo-pts').textContent = '—';
+    document.getElementById('bd-tmo-sub').textContent = 'pts';
+    tmoB.className = 'badge-pts';
+  }
+
+  // Inc
+  const incB = document.getElementById('inc-b');
+  if (!isNaN(incVal)) {
+    hasAny = true;
+    const { pts } = getIncPts(incVal);
+    incPts = pts;
+    document.getElementById('bd-inc-pts').textContent = pts;
+    document.getElementById('bd-inc-sub').textContent = `pts — ${incVal.toFixed(2)}% de inconformidade`;
+    incB.className = 'badge-pts show';
+    incB.innerHTML = `<span class="pval">${pts}</span> pts &nbsp;·&nbsp; ${incVal.toFixed(2)}%`;
+  } else {
+    document.getElementById('bd-inc-pts').textContent = '—';
+    document.getElementById('bd-inc-sub').textContent = 'pts';
+    incB.className = 'badge-pts';
+  }
+
+  // NPS
+  const npsB = document.getElementById('nps-b');
+  if (!isNaN(npsReal) && !isNaN(npsMeta)) {
+    hasAny = true;
+    const { pts, diff } = getNpsPts(npsReal, npsMeta);
+    npsPts = pts;
+    const sign = diff >= 0 ? '+' : '';
+    document.getElementById('bd-nps-pts').textContent = pts;
+    document.getElementById('bd-nps-sub').textContent = `pts — atingimento ${sign}${diff.toFixed(2)}pp`;
+    npsB.className = 'badge-pts show';
+    npsB.innerHTML = `<span class="pval">${pts}</span> pts &nbsp;·&nbsp; atingimento ${sign}${diff.toFixed(2)}pp`;
+  } else {
+    document.getElementById('bd-nps-pts').textContent = '—';
+    document.getElementById('bd-nps-sub').textContent = 'pts';
+    npsB.className = 'badge-pts';
+  }
+
+  if (!hasAny) return;
+
+  if (elegivel === 'nao') {
+    document.getElementById('r-pts').textContent = tmoPts + incPts + npsPts;
+    document.getElementById('r-faixa').textContent = '❌ Inelegível';
+    document.getElementById('r-range').textContent = '—';
+    document.getElementById('r-mult').textContent = 'R$ —';
+    document.getElementById('final-v').textContent = 'R$ 0,00';
+    document.getElementById('final-s').textContent = 'Colaborador inelegível — sem pagamento de RV';
+    const tag = document.getElementById('ftag');
+    tag.className = 'ftag sem'; tag.textContent = '❌ Inelegível';
+    document.getElementById('def-warn').className = 'def-warn';
+    return;
+  }
+
+  const total = tmoPts + incPts + npsPts;
+  const faixa = getFaixa(total);
+  const bruto = total * faixa.mult;
+  const defMult = deflator === 'adv' ? 0.80 : deflator === 'susp' ? 0.50 : deflator === 'jcausa' ? 0 : 1;
+  const final = bruto * defMult;
+
+  document.getElementById('r-pts').textContent = total;
+  document.getElementById('r-faixa').textContent = `${faixa.emoji} ${faixa.name}`;
+  document.getElementById('r-range').textContent = faixa.range;
+  document.getElementById('r-mult').textContent = `R$ ${faixa.mult.toFixed(2).replace('.', ',')}`;
+  document.getElementById('final-v').textContent = brl(final);
+
+  let sub = `${total} pts × R$ ${faixa.mult.toFixed(2).replace('.',',')} = ${brl(bruto)}`;
+  if (defMult < 1) sub += ` → após deflator: ${brl(final)}`;
+  document.getElementById('final-s').textContent = sub;
+
+  const tag = document.getElementById('ftag');
+  tag.className = `ftag ${faixa.cls}`;
+  tag.textContent = `${faixa.emoji} ${faixa.name}`;
+
+  const dw = document.getElementById('def-warn');
+  if (deflator !== 'none') {
+    const pct = deflator === 'adv' ? '20%' : deflator === 'susp' ? '50%' : '100%';
+    const lbl = deflator === 'adv' ? 'Advertência' : deflator === 'susp' ? 'Suspensão' : 'Justa Causa';
+    dw.className = 'def-warn show';
+    dw.textContent = `⚠️ Deflator de ${lbl} (−${pct}) aplicado: ${brl(bruto)} → ${brl(final)}`;
+  } else {
+    dw.className = 'def-warn';
+  }
+}
 </script>
 </body>
 </html>
