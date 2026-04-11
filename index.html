@@ -1,1 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hearts Stream — Filmes & Séries (by Hearts Store)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   PALETA DE CORES HEARTS STORE (KAWAII)
+══════════════════════════════════════ */
+:root {
+  --bg: #ffeff3;         /* Rosa muito claro (fundo principal) */
+  --bg2: #ffcad4;        /* Rosa claro (cabeçalho e modais) */
+  --bg3: #ffacc5;        /* Rosa médio (bordas secundárias) */
+  --card: #ffffff;       /* Branco (fundo dos cards) */
+  --border: #ff8fab;     /* Rosa vibrante (bordas principais) */
+  --accent: #ff4d6d;     /* Rosa choque/Pink (destaques e botões) */
+  --accent2: #ff758f;    /* Rosa médio brilhante (hover) */
+  --gold: #f4a261;
+  --text: #a4133c;       /* Pink escuro para texto sobre fundo claro */
+  --muted: #c9184a;      /* Tom de rosa mais fechado para textos secundários */
+  --r: 15px;             /* Arredondamento Soft Hearts Store */
+}
 
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px;}
+
+/* HEADER - HEARTS STREAM */
+header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,239,243,0.92);backdrop-filter:blur(10px);padding:0 40px;height:75px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--accent);cursor:pointer;}
+.logo span{color:var(--text);}
+
+.search-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--border);border-radius:30px;padding:8px 18px;width:300px;transition:all .2s;}
+.search-bar:focus-within{border-color:var(--accent); box-shadow: 0 0 10px rgba(255,77,109,0.3);}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;width:100%;}
+.search-bar input::placeholder{color:var(--bg3);}
+
+/* HERO - SOFT PINK */
+#hero{margin-top:75px;position:relative;height:450px;overflow:hidden;display:flex;align-items:flex-end;background-size:cover;background-position:center top;}
+#hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 10%,rgba(255,239,243,0.3) 50%,transparent);}
+.hero-content{position:relative;z-index:2;padding:40px 60px;max-width:600px;background:rgba(255,255,255,0.4); border-radius: 15px; backdrop-filter: blur(5px); margin-left: 40px; margin-bottom: 20px; border: 1px solid var(--bg3);}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:56px;line-height:1;margin-bottom:12px;color: var(--accent); text-shadow:0 2px 10px rgba(255,255,255,0.8);}
+.hero-desc{font-size:14px;color:var(--muted);line-height:1.6;font-weight: 500;}
+
+/* GENRE PILLS - PINK */
+.genre-pills{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0;padding:0 40px;}
+.genre-pill{background:var(--card);border:2px solid var(--border);color:var(--accent);cursor:pointer;padding:7px 18px;border-radius:20px;font-size:13px;font-weight:700;transition:all .2s;}
+.genre-pill.active,.genre-pill:hover{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* GRID CARDS HEARTS */
+.section{padding:10px 40px 30px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:20px;color: var(--text);}
+.section-title span{color:var(--accent); font-size: 1.2em;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .25s,border-color .25s;border:2px solid var(--bg3);position:relative; box-shadow: 0 4px 6px rgba(164,19,60,0.05);}
+.card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 10px 20px rgba(164,19,60,0.15);}
+.card-img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:var(--bg2);}
+.card-body{padding:12px; text-align: center; background: var(--card);}
+.card-title{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* PLAYER MODAL PINK */
+#player-modal{position:fixed;inset:0;z-index:3000;background:rgba(164,19,60,0.8);display:none;flex-direction:column;backdrop-filter:blur(5px);}
+#player-modal.open{display:flex;}
+.player-header{display:flex;align-items:center;justify-content:space-between;padding:12px 25px;background:var(--bg2);border-bottom:2px solid var(--border);flex-shrink:0;}
+.player-title-text{font-family:'Bebas Neue',sans-serif;font-size:22px;color: var(--text);}
+.player-title-text span{color:var(--accent);}
+.player-close{background:var(--accent);border:none;color:#fff;cursor:pointer;padding:10px 25px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;transition:all .2s; text-transform: uppercase;}
+.player-close:hover{background:var(--accent2);}
+.player-wrapper{flex:1;position:relative;background:#000; margin: 20px; border-radius: 10px; overflow: hidden; border: 4px solid var(--border);}
+video{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;}
+video::-webkit-media-controls-enclosure {display: flex !important;}
+
+/* LOADING PINK */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 0;gap:16px;color:var(--accent); font-weight: 700; grid-column: 1/-1;}
+.spinner{width:40px;height:40px;border:4px solid var(--bg3);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+footer{text-align:center;padding:30px;color:var(--muted);font-size:12px;border-top:2px solid var(--border);margin-top:20px;background: var(--bg2);}
+footer span{color:var(--accent);font-weight: 700;}
+
+@media(max-width:768px){
+  header{padding:0 15px;}
+  .search-bar{width:160px;}
+  .logo{font-size: 24px;}
+  #hero{height:300px;}
+  .hero-content{padding:15px; margin-left: 15px; margin-right: 15px;}
+  .hero-title{font-size:32px;}
+  .section{padding:10px 15px 20px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;}
+  .player-wrapper{margin: 10px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="location.reload()">HEARTS<span>STREAM</span></div>
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="Buscar filmes e séries..." autocomplete="off">
+  </div>
+  <div style="font-weight: bold; color: var(--accent); font-size: 13px;">by Hearts Store</div>
+</header>
+
+<section id="hero">
+  <div class="hero-content">
+    <h1 class="hero-title" id="hero-title">Carregando...</h1>
+    <p class="hero-desc" id="hero-desc">Conectando ao catálogo do Zap Plus...</p>
+  </div>
+</section>
+
+<div class="genre-pills" id="genre-pills"></div>
+
+<div class="section">
+  <h2 class="section-title">NOVOS NO <span>CATÁLOGO</span></h2>
+  <div class="grid" id="main-grid">
+    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Hearts Stream está carregando...</span></div>
+  </div>
+</div>
+
+<div id="player-modal">
+  <div class="player-header">
+    <div class="player-title-text">HEARTS<span>STREAM</span></div>
+    <button class="player-close" onclick="closePlayer()">✕ Fechar X</button>
+  </div>
+  <div class="player-wrapper">
+    <video id="player-video" controls autoplay controlsList="nodownload">
+      Seu navegador não suporta a tag video.
+    </video>
+  </div>
+</div>
+
+<footer>© 2025 <span>Hearts Stream</span> · Dados: Zap Plus & TMDB · Estilo: <span>Hearts Store</span></footer>
+
+<script>
+/* ══════════════════════════════════════
+   CONFIGURACAO ZAP PLUS (GUSTAVO VOD v2)
+══════════════════════════════════════ */
+const XC = {
+    host: 'http://ctdg.me',
+    user: '87148066',
+    pass: '18310678'
+};
+
+const PROXY = "https://cors-anywhere.herokuapp.com/";
+
+// TMDB para metadados e visual (sinopse, hero)
+const KEY = '8265bd1679663a7ea12ac168da84d2e8';
+const TMDB_API = 'https://api.themoviedb.org/3';
+const IMG = 'https://image.tmdb.org/t/p/';
+
+async function tmdbApi(path, p={}) {
+  const u = new URL(`${TMDB_API}${path}`);
+  u.searchParams.set('api_key', KEY);
+  u.searchParams.set('language','pt-BR');
+  Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));
+  try { return (await fetch(u)).json(); } catch(e) { return {}; }
+}
+
+// Busca dados da sua API Zap Plus
+async function xcApi(action) {
+    const url = `${XC.host}/player_api.php?username=${XC.user}&password=${XC.pass}&action=${action}`;
+    try {
+        const r = await fetch(PROXY + url);
+        return await r.json();
+    } catch (e) {
+        console.error("Erro na API Zap Plus:", e);
+        return null;
+    }
+}
+
+let allData = [];
+
+async function loadContent() {
+    const grid = document.getElementById('main-grid');
+    
+    // Busca Filmes e Séries ao mesmo tempo
+    const [movies, series] = await Promise.all([
+        xcApi('get_vod_streams'),
+        xcApi('get_series')
+    ]);
+
+    if (!movies || !series) {
+        grid.innerHTML = `<div class="loading">Erro de conexão. Ative o acesso no link do CORS Anywhere.</div>`;
+        return;
+    }
+
+    // Organiza os dados e define o tipo
+    const movieData = (movies || []).map(i => ({...i, type: 'movie'}));
+    const seriesData = (series || []).map(i => ({...i, type: 'series'}));
+
+    allData = [...movieData, ...seriesData];
+    // Ordena pelos IDs mais novos
+    allData.sort((a, b) => (b.stream_id || b.series_id) - (a.stream_id || a.series_id));
+
+    renderGrid(allData.slice(0, 80));
+    
+    // Configura o Hero com o TMDB para ter sinopse
+    if(allData[0]) {
+        setupHero(allData[0]);
+    }
+}
+
+async function setupHero(item) {
+    const name = item.name;
+    // Busca sinopse no TMDB pelo nome
+    const search = await tmdbApi('/search/multi', {query: name});
+    const res = (search.results || []).find(r => r.backdrop_path);
+    
+    if(res) {
+        document.getElementById('hero-title').innerText = res.title || res.name;
+        document.getElementById('hero-desc').innerText = res.overview || 'Conectado ao servidor Zap Plus.';
+        document.getElementById('hero').style.backgroundImage = `url(${IMG}original${res.backdrop_path})`;
+    } else {
+        // Fallback se não achar no TMDB
+        document.getElementById('hero-title').innerText = name;
+        document.getElementById('hero-desc').innerText = 'Conectado ao servidor Zap Plus.';
+        document.getElementById('hero').style.backgroundImage = `url(${item.stream_icon || item.cover})`;
+    }
+}
+
+function renderGrid(items) {
+    const grid = document.getElementById('main-grid');
+    grid.innerHTML = items.map(item => {
+        // Limpa o nome para o onclick
+        const cleanName = (item.name || '').replace(/'/g, "");
+        const id = item.stream_id || item.series_id;
+        const ext = item.container_extension || 'mp4';
+        const poster = item.stream_icon || item.cover || 'https://via.placeholder.com/160x240/ffcad4/a4133c?text=S/Capa';
+        
+        return `
+            <div class="card" onclick="openPlayer('${cleanName}', '${id}', '${ext}', '${item.type}')">
+                <img class="card-img" src="${poster}" alt="${cleanName}" loading="lazy" onerror="this.src='https://via.placeholder.com/160x240/ffcad4/a4133c?text=S/Capa'">
+                <div class="card-body">
+                    <div class="card-title">${item.name}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openPlayer(name, id, ext, type) {
+    const modal = document.getElementById('player-modal');
+    const video = document.getElementById('player-video');
+    
+    // Define a pasta correta: /movie/ ou /series/
+    const folder = type === 'movie' ? 'movie' : 'series';
+    const streamUrl = `${XC.host}/${folder}/${XC.user}/${XC.pass}/${id}.${ext}`;
+
+    video.src = streamUrl;
+    video.controls = true; // Garante que controles nativos apareçam
+    
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden'; // Trava o scroll
+    
+    video.load();
+    video.play().catch(e => console.log("Play automático bloqueado, aguardando clique."));
+}
+
+function closePlayer() {
+    const modal = document.getElementById('player-modal');
+    const video = document.getElementById('player-video');
+    video.pause();
+    video.src = ""; // Limpa a memória
+    modal.classList.remove('open');
+    document.body.style.overflow = ''; // Libera o scroll
+}
+
+// Busca simples na lista
+document.getElementById('search-input').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    if(!q) { renderGrid(allData.slice(0, 80)); return; }
+    const filtered = allData.filter(i => (i.name || '').toLowerCase().includes(q));
+    renderGrid(filtered.slice(0, 80));
+});
+
+// Inicia
+loadContent();
+</script>
+</body>
+</html>
