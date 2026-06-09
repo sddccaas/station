@@ -127,7 +127,7 @@ body.L .cblock{background:#fafbfe;}
 body.L .rbadge{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.09);}
 
 /* PANELS */
-.panel{position:fixed;top:0;height:100%;z-index:700;display:flex;flex-direction:column;transition:transform .34s cubic-bezier(.4,0,.2,1);background:#0b0b12;}
+.panel{position:fixed;top:0;height:100%;z-index:700;display:flex;flex-direction:column;transition:transform .34s cubic-bezier(.4,0,.2,1);background:#0b0b12;max-width: 100vw;}
 body.L .panel{background:#f8f9fd;color:#1e1e38;}
 .panel.PL{left:0;width:360px;border-right:1px solid var(--bdr2);transform:translateX(-100%);}
 .panel.PR{right:0;width:400px;border-left:1px solid var(--bdr2);transform:translateX(100%);}
@@ -138,10 +138,27 @@ body.L .panel{background:#f8f9fd;color:#1e1e38;}
 body.L .phead{background:#f8f9fd;}
 .ptitle{font-family:'Unbounded',sans-serif;font-size:1rem;font-weight:900;letter-spacing:-.02em;}
 .ptitle em{color:var(--red);font-style:normal;}
-.pbody{flex:1;overflow-y:auto;padding:15px 16px;}
+
+/* AJUSTE PIDS P/ NÃO VAZAR */
+.pbody{flex:1;overflow-y:auto;padding:15px 16px;display: block;}
 body.L .pbody{background:#f8f9fd;}
 
-/* PIDS */
+/* PIDS TEXTO - RESOLUÇÃO DA QUEBRA */
+.ptxt{
+  font-family:'Outfit',sans-serif;
+  font-size:13.5px;
+  line-height:1.85;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  color:#9090b0;
+  width: 100%;
+  display: block;
+}
+body.L .ptxt{color:#1e1e38;}
+.ptxt mark{background:var(--red);color:#fff;border-radius:3px;padding:0 2px;}
+
+/* RESTO DOS ESTILOS */
 .psrch-wrap{padding:13px 16px;border-bottom:1px solid var(--bdr);flex-shrink:0;}
 body.L .psrch-wrap{background:#f8f9fd;}
 .psrch{width:100%;padding:11px 14px;border-radius:11px;border:1px solid var(--bdr2);background:var(--sur2);color:var(--txt);font-family:'Outfit',sans-serif;font-size:13.5px;outline:none;transition:border-color .2s,box-shadow .2s;}
@@ -151,9 +168,6 @@ body.L .psrch{background:#fff;color:#1e1e38;}
 .pnav{width:28px;height:28px;border-radius:8px;border:1px solid var(--bdr2);background:transparent;color:var(--sub);font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .15s,color .15s,background .15s;}
 .pnav:hover{border-color:var(--red);color:var(--red);background:var(--rdim);}
 body.L .pnav{border-color:rgba(200,0,40,.25);color:#55556a;}
-.ptxt{font-family:'Outfit',sans-serif;font-size:13.5px;line-height:1.85;white-space:pre-wrap;word-break:break-word;color:#9090b0;}
-body.L .ptxt{color:#1e1e38;}
-.ptxt mark{background:var(--red);color:#fff;border-radius:3px;padding:0 2px;}
 
 /* SCRIPTS */
 .psrchwrap2{padding:13px 16px;border-bottom:1px solid var(--bdr);flex-shrink:0;display:flex;flex-direction:column;gap:7px;}
@@ -222,7 +236,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
 </head>
 <body>
 
-<!-- Carregar Site -->
 <canvas id="intro-canvas" style="position:fixed;inset:0;z-index:99999;width:100%;height:100%;"></canvas>
 
 <script>
@@ -298,7 +311,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
     }
   }
 
-  // rastros diagonais no mesmo ângulo do corte
   var streaks=[];
   function spawnStreaks(){
     var cols=['#ff1744','#ff5252','#ffffff','#ff8a80','#ffcc00'];
@@ -391,19 +403,16 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
     ctx.fillStyle='#07070c'; ctx.fillRect(0,0,W,H);
     ctx.restore();
 
-    // G aparece com flicker (0–350ms)
     if(t<500){
       var gp=clamp(t/280,0,1);
       var gAlpha = gp<.6 ? easeOut(gp)*(Math.sin(gp*38)*.35+.65) : easeOut(clamp((gp-.6)/.4,0,1));
       drawG(gAlpha*bgA, 0, 0);
     }
 
-    // streaks diagonais 
     if(t>=80&&t<480) tickStreaks(dt);
 
     var bolt=getBolt();
 
-    // raio se desenha 
     if(t>=250&&t<540){
       var bp=easeOutExpo(clamp((t-250)/270,0,1));
       var sub=bolt.slice(0,Math.max(2,Math.floor(bp*bolt.length)));
@@ -412,7 +421,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       drawBoltPts(sub,bgA*.8,1,'#ff1744',7);
     }
 
-    // impacto
     if(t>=500&&!impactDone){
       impactDone=true;
       spawnBurst(cx,cy,100,['#ff1744','#ff5252','#ffcc00','#ffffff','#ff8a80']);
@@ -421,7 +429,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       snap.getContext('2d').drawImage(canvas,0,0);
     }
 
-    // flash radial 
     if(t>=500&&t<630){
       var fa=clamp(1-(t-500)/130,0,1); fa=fa*fa;
       ctx.save(); ctx.globalAlpha=fa*.88;
@@ -433,7 +440,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       ctx.restore();
     }
 
-    // raio fade
     if(t>=250&&t<600){
       var ba=t<500?1:clamp(1-(t-500)/100,0,1);
       drawBoltPts(bolt,ba*.6,18,'rgba(255,23,68,.28)',38);
@@ -443,7 +449,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
 
     tickParticles(dt);
 
-    // G rasga em diagonal 
     if(t>=500&&t<860&&snap){
       var sl=getSlash();
       var rp=easeOutExpo(clamp((t-500)/360,0,1));
@@ -454,7 +459,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       ctx.fillStyle='#07070c'; ctx.fillRect(0,0,W,H);
       ctx.restore();
 
-      // metade top-left
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(-W*2,-H*2); ctx.lineTo(W*3,-H*2);
@@ -463,7 +467,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       ctx.drawImage(snap,-px*offset,-py*offset);
       ctx.restore();
 
-      // metade bot-right
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(sl.x1,sl.y1); ctx.lineTo(sl.x2,sl.y2);
@@ -472,7 +475,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       ctx.drawImage(snap,px*offset,py*offset);
       ctx.restore();
 
-      // fenda de luz diagonal
       var gapA=clamp(rp*4,0,1)*clamp((1-rp)*4,0,1);
       if(gapA>0){
         ctx.save(); ctx.globalAlpha=gapA;
@@ -486,7 +488,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       }
     }
 
-    // fade out (840–1160ms)
     if(t>=840){
       var fo=clamp((t-840)/320,0,1);
       ctx.save(); ctx.globalAlpha=easeInOut(fo);
@@ -541,7 +542,7 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
         <div class="nchip"><div class="nclbl">Mês</div><div class="ncval" id="nvm">—</div><div class="ncst" id="nsm">STANDBY</div></div>
       </div>
     </div>
-    <a href="https://www.google.com/?hl=pt_BR" target="_blank" class="card ph"><div class="cicon">🔗</div><div class="cname">Placeholder</div><div class="csub">google.com</div></as>
+    <a href="https://www.google.com/?hl=pt_BR" target="_blank" class="card ph"><div class="cicon">🔗</div><div class="cname">Placeholder</div><div class="csub">google.com</div></a>
     <a href="https://www.google.com/?hl=pt_BR" target="_blank" class="card ph"><div class="cicon">🔗</div><div class="cname">Placeholder</div><div class="csub">google.com</div></a>
     <a href="https://www.google.com/?hl=pt_BR" target="_blank" class="card ph"><div class="cicon">🔗</div><div class="cname">Placeholder</div><div class="csub">google.com</div></a>
     <a href="https://www.google.com/?hl=pt_BR" target="_blank" class="card ph"><div class="cicon">🔗</div><div class="cname">Placeholder</div><div class="csub">google.com</div></a>
@@ -559,14 +560,12 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
   </div>
 </div>
 
-<!-- CLOCK -->
 <div id="clk">
   <span id="clk-date"></span>
   <span id="clk-sep">·</span>
   <span id="clk-hm">00:00</span><span id="clk-s">:00</span>
 </div>
 
-<!-- MODAL NPS -->
 <div class="ov" id="npsM">
   <div class="modal">
     <div class="mhead"><div class="mtitle">Analítico <span>NPS</span></div><button class="mclose" onclick="closeM('npsM')">×</button></div>
@@ -595,7 +594,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
   </div>
 </div>
 
-<!-- PIDS -->
 <div class="panel PR" id="pidsP">
   <div class="phead">
     <div class="ptitle">PIDS <em>para SS</em></div>
@@ -612,7 +610,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
   <div class="pbody"><div class="ptxt" id="pidsC"></div></div>
 </div>
 
-<!-- PAINEL SCRIPTS -->
 <div class="panel PL" id="scP">
   <div class="phead">
     <div class="ptitle">Consulta <em>Scripts</em></div>
@@ -635,7 +632,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
   <div class="pbody" id="scList"></div>
 </div>
 
-<!-- CONTATO POP UP -->
 <div id="ctpop">
   <div class="ctitle">Dados <em>Profissionais</em></div>
   <div class="crow"><span class="ckey">Nome</span><span class="cval">xxxxxxxxxxxxxxx</span></div>
@@ -644,7 +640,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
   <div class="crow"><span class="ckey">E-mail</span><span class="cval">xxxxxxxxxxxxxxx</span></div>
 </div>
 
-<!-- FABs -->
 <div class="fabl"><button class="fab" id="ctfab" onclick="toggleCt()">👤 Dados de Contato</button></div>
 <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:500;">
   <button class="fab" onclick="openTriple()" style="position:relative;">
@@ -654,8 +649,6 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
 </div>
 <div class="fabr"><button class="fab red" onclick="togglePanel('pidsP')">PIDS para SS</button></div>
 
-
-<!-- MODAL ABRIR SITES -->
 <div class="ov" id="tripleM">
   <div class="modal" style="max-width:480px">
     <div class="mhead">
@@ -663,58 +656,27 @@ body.lite .card{animation-duration:0.001s!important;animation-delay:0s!important
       <button class="mclose" onclick="closeM('tripleM')">×</button>
     </div>
     <p style="font-family:'Outfit',sans-serif;font-size:13px;color:var(--sub);margin-bottom:20px;line-height:1.6;">O navegador bloqueou a abertura dos sites. Siga os passos abaixo para liberar <b style="color:var(--txt)">uma única vez</b> — depois nunca mais bloqueará.</p>
-
-    <!-- Chrome -->
     <div class="cblock" style="margin-bottom:12px;">
-      <div class="cblockt" style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:16px">🟡</span> Google Chrome
-      </div>
+      <div class="cblockt" style="display:flex;align-items:center;gap:8px;"><span style="font-size:16px">🟡</span> Google Chrome</div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
-        <div style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">1</span>
-          <span style="font-size:13px;color:var(--sub);line-height:1.5;">Olhe a <b style="color:var(--txt)">barra de endereço</b> — vai aparecer um ícone de popup bloqueado <b style="color:var(--red)">🚫</b> no canto direito</span>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">2</span>
-          <span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique nesse ícone e selecione <b style="color:var(--txt)">"Sempre permitir popups e redirecionamentos"</b></span>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">3</span>
-          <span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique em <b style="color:var(--txt)">"Concluído"</b> e depois clique no card <b style="color:var(--red)">🚀 Abrir Sistemas</b> novamente</span>
-        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;"><span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">1</span><span style="font-size:13px;color:var(--sub);line-height:1.5;">Olhe a <b style="color:var(--txt)">barra de endereço</b> — vai aparecer um ícone de popup bloqueado <b style="color:var(--red)">🚫</b> no canto direito</span></div>
+        <div style="display:flex;align-items:flex-start;gap:12px;"><span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">2</span><span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique nesse ícone e selecione <b style="color:var(--txt)">"Sempre permitir popups e redirecionamentos"</b></span></div>
+        <div style="display:flex;align-items:flex-start;gap:12px;"><span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">3</span><span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique em <b style="color:var(--txt)">"Concluído"</b> e depois clique no card <b style="color:var(--red)">🚀 Abrir Sistemas</b> novamente</span></div>
       </div>
     </div>
-
-    <!-- Edge -->
     <div class="cblock">
-      <div class="cblockt" style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:16px">🔵</span> Microsoft Edge
-      </div>
+      <div class="cblockt" style="display:flex;align-items:center;gap:8px;"><span style="font-size:16px">🔵</span> Microsoft Edge</div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
-        <div style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">1</span>
-          <span style="font-size:13px;color:var(--sub);line-height:1.5;">Na <b style="color:var(--txt)">barra de endereço</b>, procure o ícone <b style="color:var(--red)">🚫</b> ou uma notificação de popup bloqueado</span>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">2</span>
-          <span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique e selecione <b style="color:var(--txt)">"Sempre permitir"</b> para este arquivo</span>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">3</span>
-          <span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique no card <b style="color:var(--red)">🚀 Abrir Sistemas</b> novamente</span>
-        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;"><span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">1</span><span style="font-size:13px;color:var(--sub);line-height:1.5;">Na <b style="color:var(--txt)">barra de endereço</b>, procure o ícone <b style="color:var(--red)">🚫</b> ou uma notificação de popup bloqueado</span></div>
+        <div style="display:flex;align-items:flex-start;gap:12px;"><span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">2</span><span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique e selecione <b style="color:var(--txt)">"Sempre permitir"</b> para este arquivo</span></div>
+        <div style="display:flex;align-items:flex-start;gap:12px;"><span style="font-family:'Unbounded',sans-serif;font-size:.7rem;color:var(--red);font-weight:900;min-width:20px;">3</span><span style="font-size:13px;color:var(--sub);line-height:1.5;">Clique no card <b style="color:var(--red)">🚀 Abrir Sistemas</b> novamente</span></div>
       </div>
     </div>
-
-    <div style="margin-top:16px;padding:12px 16px;border-radius:11px;background:var(--rdim);border:1px solid var(--bdr2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--sub);text-align:center;">
-      ✅ APÓS LIBERAR UMA VEZ — NUNCA MAIS PRECISARÁ REPETIR
-    </div>
+    <div style="margin-top:16px;padding:12px 16px;border-radius:11px;background:var(--rdim);border:1px solid var(--bdr2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--sub);text-align:center;">✅ APÓS LIBERAR UMA VEZ — NUNCA MAIS PRECISARÁ REPETIR</div>
   </div>
 </div>
 
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// cursor customizado
+<script>
 var pontoCursor  = document.getElementById('dot');
 var anelCursor   = document.getElementById('ring');
 var mouseX = -100, mouseY = -100, anelX = -100, anelY = -100;
@@ -732,7 +694,6 @@ document.addEventListener('mouseout', function(e) {
   if (e.target.closest('button,a,.card,.sc,.loadbtn,.fab,.cbtn,.mclose'))
     document.body.classList.remove('hov');
 });
-// anel segue o cursor
 (function animarAnel() {
   anelX += (mouseX - anelX) * 0.13;
   anelY += (mouseY - anelY) * 0.13;
@@ -741,7 +702,6 @@ document.addEventListener('mouseout', function(e) {
   requestAnimationFrame(animarAnel);
 })();
 
-// fundo animado
 var canvas = document.getElementById('cv');
 var ctx    = canvas.getContext('2d');
 var particulas = [];
@@ -766,16 +726,12 @@ function redimensionarCanvas() {
 function desenharCanvas() {
   if (pausado) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // mover partículas e rebater nas bordas
   for (var i = 0; i < particulas.length; i++) {
     particulas[i].x += particulas[i].vx;
     particulas[i].y += particulas[i].vy;
     if (particulas[i].x < 0 || particulas[i].x > canvas.width)  particulas[i].vx *= -1;
     if (particulas[i].y < 0 || particulas[i].y > canvas.height) particulas[i].vy *= -1;
   }
-
-  // linhas entre partículas
   for (var i = 0; i < particulas.length; i++) {
     for (var j = i + 1; j < particulas.length; j++) {
       var dx = particulas[i].x - particulas[j].x;
@@ -802,8 +758,6 @@ function desenharCanvas() {
       ctx.stroke();
     }
   }
-
-  // desenhar os pontos
   for (var i = 0; i < particulas.length; i++) {
     var perto = Math.sqrt(Math.pow(particulas[i].x - mouseX, 2) + Math.pow(particulas[i].y - mouseY, 2)) < DIST_CURSOR;
     ctx.beginPath();
@@ -819,7 +773,6 @@ window.addEventListener('resize', redimensionarCanvas);
 redimensionarCanvas();
 desenharCanvas();
 
-// modo leve — desativa animações pesadas pra máquinas mais lentas
 var modoLeve = false;
 function toggleLite() {
   modoLeve = !modoLeve;
@@ -840,7 +793,6 @@ function toggleLite() {
   localStorage.setItem('gh_lite', modoLeve ? '1' : '0');
 }
 
-// relógio no topo — atualiza a cada segundo
 var DIAS_SEMANA = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 var NOMES_MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 function atualizarRelogio() {
@@ -856,7 +808,6 @@ function atualizarRelogio() {
 }
 atualizarRelogio();
 
-// frases
 var frases = [
   'FOCO NO 10 — A SATISFAÇÃO DO CLIENTE É A NOSSA META.',
   'CADA ATENDIMENTO É UMA OPORTUNIDADE ÚNICA.',
@@ -868,13 +819,12 @@ var fraseAtual = 0;
 setInterval(function() {
   var el = document.getElementById('motiv');
   el.style.animation = 'none';
-  el.offsetHeight; // força reflow pra reiniciar a animação
+  el.offsetHeight; 
   fraseAtual = (fraseAtual + 1) % frases.length;
   el.textContent = frases[fraseAtual];
   el.style.animation = 'mup .5s cubic-bezier(.22,1,.36,1)';
 }, 7000);
 
-// tema claro/escuro
 function toggleTheme() {
   document.body.classList.toggle('L');
   localStorage.setItem('gh_theme', document.body.classList.contains('L') ? 'L' : 'D');
@@ -883,8 +833,6 @@ function toggleTheme() {
   calcNps('m');
 }
 
-// abre todos os sites 			de uma vez
-// coloca aqui as URLs que você usa no dia a dia
 var urlsSistemas = [
   'https://www.google.com/?hl=pt_BR',
   'https://www.google.com/?hl=pt_BR',
@@ -914,30 +862,14 @@ function openTriple() {
   }
 }
 
-// abre/fecha modais
 function openM(id) {
   var modal = document.getElementById(id);
   modal.classList.add('on');
   modal.onclick = function(e) { if (e.target === modal) closeM(id); };
 }
 function closeM(id) { document.getElementById(id).classList.remove('on'); }
-
-// abre/fecha painéis laterais
 function togglePanel(id) { document.getElementById(id).classList.toggle('on'); }
-function toggleBoth() {
-  var painelScripts = document.getElementById('scP');
-  var painelPids    = document.getElementById('pidsP');
-  var algumAberto   = painelScripts.classList.contains('on') || painelPids.classList.contains('on');
-  if (algumAberto) {
-    painelScripts.classList.remove('on');
-    painelPids.classList.remove('on');
-  } else {
-    painelScripts.classList.add('on');
-    painelPids.classList.add('on');
-  }
-}
 
-// popup de dados de contato
 var popupContatoAberto = false;
 function toggleCt() {
   popupContatoAberto = !popupContatoAberto;
@@ -954,8 +886,6 @@ function fecharContato(e) {
   }
 }
 
-// painel de PIDS para SS
-// troque o texto abaixo pelo conteúdo real dos PIDS
 var PIDS_TEXTO = "Cole aqui o texto dos PIDS para SS.\nPode ser um texto longo com múltiplas linhas.\nUse a busca acima para pesquisar palavras.";
 
 function atualizarCorPids() {
@@ -966,7 +896,7 @@ function atualizarCorPids() {
 document.getElementById('pidsC').textContent = PIDS_TEXTO;
 atualizarCorPids();
 
-var indicePids = 0; // resultado atual na busca do PIDS
+var indicePids = 0;
 
 function searchPids() {
   var busca = document.getElementById('pidsQ').value.trim();
@@ -1020,7 +950,6 @@ function pidsKey(e) {
   if (e.key === 'Enter') { e.preventDefault(); pidsNav(e.shiftKey ? -1 : 1); }
 }
 
-// painel de scripts — carrega de arquivo .txt, busca e copia com um clique
 var todosScripts = [];
 var favoritos    = {};
 var abaAtiva     = 'all';
@@ -1123,18 +1052,13 @@ function searchSc() {
   var busca     = document.getElementById('scQ').value.trim();
   var container = document.getElementById('scList');
   var contador  = document.getElementById('sccnt');
-
   var listaBase   = abaAtiva === 'favs' ? todosScripts.filter(function(_, i){ return favoritos[i]; }) : todosScripts;
   var indicesBase = abaAtiva === 'favs'
     ? todosScripts.reduce(function(acc, _, i){ if (favoritos[i]) acc.push(i); return acc; }, [])
     : todosScripts.map(function(_, i){ return i; });
-
   if (!busca) { renderCurrentTab(); contador.textContent = ''; indiceScript = 0; return; }
-  if (!todosScripts.length) { contador.textContent = '0/0'; contador.style.color = 'var(--red)'; return; }
-
   var escapado = busca.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   var regex    = new RegExp('(' + escapado + ')', 'gi');
-
   container.innerHTML = listaBase.map(function(texto, i) {
     var idxGlobal   = indicesBase[i];
     var ehFav       = !!favoritos[idxGlobal];
@@ -1146,7 +1070,6 @@ function searchSc() {
          + '<button class="sc-fav' + (ehFav ? ' on' : '') + '" onclick="favClick(event,' + idxGlobal + ')">★</button>'
          + '</div>';
   }).join('');
-
   var resultados = container.querySelectorAll('mark');
   var total = resultados.length;
   if (!total) { contador.textContent = '0/0'; contador.style.color = 'var(--red)'; indiceScript = 0; return; }
@@ -1178,14 +1101,12 @@ function scKey(e) {
   if (e.key === 'Enter') { e.preventDefault(); scNav(e.shiftKey ? -1 : 1); }
 }
 
-// calculadora NPS
 var contextoAudio, metaDiariaBatida = false;
 function getContextoAudio() {
   if (!contextoAudio) contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
   return contextoAudio;
 }
 
-// soom quando bate a meta
 function tocarSomVitoria() {
   try {
     var ac   = getContextoAudio();
@@ -1236,7 +1157,6 @@ function carregarNps() {
   } catch(e) {}
 }
 
-// período
 function calcNps(periodo) {
   var promotores  = +document.getElementById(periodo === 'd' ? 'dp' : 'mp').value || 0;
   var neutros     = +document.getElementById(periodo === 'd' ? 'dn' : 'mn').value || 0;
@@ -1244,43 +1164,33 @@ function calcNps(periodo) {
   var meta        = +document.getElementById(periodo + 'm').value || 70;
   var total       = promotores + neutros + detratores;
   var pontuacao   = total > 0 ? ((promotores - detratores) / total) * 100 : 0;
-
   var cor, status;
-  if (!total)                      { cor = 'var(--sub)'; status = 'STANDBY'; }
-  else if (pontuacao >= meta)      { cor = '#00e676';    status = 'META BATIDA 🚀'; }
-  else if (meta - pontuacao <= 10) { cor = '#ffab00';    status = 'PERTO ⚠️'; }
-  else                             { cor = '#ff1744';    status = 'ABAIXO 🏃'; }
-
-  // quantos promotores faltam pra bater a meta
+  if (!total) { cor = 'var(--sub)'; status = 'STANDBY'; }
+  else if (pontuacao >= meta) { cor = '#00e676'; status = 'META BATIDA 🚀'; }
+  else if (meta - pontuacao <= 10) { cor = '#ffab00'; status = 'PERTO ⚠️'; }
+  else { cor = '#ff1744'; status = 'ABAIXO 🏃'; }
   if (total > 0 && pontuacao < meta) {
     var faltam = Math.ceil((meta / 100 * total - promotores + detratores) / (1 - meta / 100));
     if (faltam > 0) status = '+' + faltam + ' PROMO';
   }
-
-  // som
   if (periodo === 'd' && pontuacao >= meta && total > 0 && !metaDiariaBatida) {
     tocarSomVitoria();
     metaDiariaBatida = true;
   }
   if (periodo === 'd' && pontuacao < meta) metaDiariaBatida = false;
-
   document.getElementById('rv' + periodo).textContent = total ? pontuacao.toFixed(1) + '%' : '—';
   var badgeEl = document.getElementById('rb' + periodo);
-  badgeEl.textContent    = status;
-  badgeEl.style.color    = cor;
+  badgeEl.textContent = status;
+  badgeEl.style.color = cor;
   badgeEl.style.borderColor = total ? cor : '';
   document.getElementById('cb' + periodo).style.borderColor = total ? cor : '';
-
   if (periodo === 'd') {
-    // atualiza o card principal de NPS no grid
     document.getElementById('nvd').textContent = total ? pontuacao.toFixed(1) + '%' : '—';
     document.getElementById('nvd').style.color = total ? cor : '';
     document.getElementById('nsd').textContent = total ? status : 'STANDBY';
     document.getElementById('nsd').style.color = total ? cor : '';
     document.getElementById('fnum').textContent = total ? Math.round(pontuacao) : '—';
     document.getElementById('fnum').style.webkitTextStrokeColor = total ? cor + '44' : 'rgba(255,23,68,.08)';
-
-    // card muda de cor conforme o status atual
     var cardNps  = document.getElementById('npsCard');
     var temaClaro = document.body.classList.contains('L');
     if (!total) {
@@ -1309,12 +1219,10 @@ function calcNps(periodo) {
   salvarNps();
 }
 
-// inicialização restaura preferências e dados salvos
 (function inicializar() {
   if (localStorage.getItem('gh_theme') === 'L') document.body.classList.add('L');
   if (localStorage.getItem('gh_lite') === '1') {
-    modoLeve = true;
-    pausado  = true;
+    modoLeve = true; pausado = true;
     document.body.classList.add('lite');
     document.getElementById('lite-btn').classList.add('on');
     document.getElementById('lite-btn').title = 'Modo Normal';
@@ -1326,7 +1234,6 @@ function calcNps(periodo) {
   } catch(e) {}
   carregarNps();
 })();
-
 </script>
 </body>
 </html>
